@@ -2,9 +2,9 @@
 // 送信先のGoogleフォーム。entry番号の調べ方はREADMEを参照。
 const FORM = {
   action: "https://docs.google.com/forms/d/e/1FAIpQLSedTzCoYkJDSA0qQXbjn-nviuQ_5FizbeXDGO6HOFHMJdrZFQ/formResponse",
-  discordId: "",        // e.g. entry.123456789
-  displayName: "",      // e.g. entry.987654321
-  nickname: ""          // e.g. entry.555555555
+  discordId: "entry.1510779405",
+  displayName: "entry.951351487",
+  nickname: "entry.1696208148"
 };
 
 const QUIZ = [
