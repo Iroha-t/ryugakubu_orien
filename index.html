@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>留学部オリエンテーション</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="robots" content="noindex, nofollow, noimageindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* Layout: one step per screen, a flight-route progress bar on top, a fixed action bar at the bottom. */
+:root{
+  --navy:#0b3561; --sea:#13809e; --aqua:#dff1f4; --sun:#f5a53a; --ok:#1f8a5b; --ng:#c2463a;
+  --bg:#f3f8f9; --card:#ffffff; --fg:#14283b; --muted:#557083; --line:#cfe1e6;
+  --font-display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
+  --font-body:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --navy:#9fd3e6; --sea:#4fb7d3; --aqua:#16323f; --sun:#f5b25a; --ok:#4cc38a; --ng:#ef7b6f;
+  --bg:#0b1a26; --card:#122633; --fg:#e4eef2; --muted:#93acba; --line:#24414f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --navy:#9fd3e6; --sea:#4fb7d3; --aqua:#16323f; --sun:#f5b25a; --ok:#4cc38a; --ng:#ef7b6f;
+  --bg:#0b1a26; --card:#122633; --fg:#e4eef2; --muted:#93acba; --line:#24414f; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.8;margin:0}
+h1,h2,h3{font-family:var(--font-display);color:var(--navy);text-wrap:balance;line-height:1.4;margin:0}
+h1{font-size:1.9rem;font-weight:900} h2{font-size:1.5rem;font-weight:900} h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+.wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+header .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+header img{width:40px;height:40px}
+.route{flex:1;min-width:0}
+.route-label{font-size:.75rem;color:var(--muted);letter-spacing:.06em;display:flex;justify-content:space-between}
+.track{position:relative;height:18px;margin-top:2px}
+.track::before{content:"";position:absolute;left:0;right:0;top:8px;border-top:2px dashed var(--line)}
+.track .done{position:absolute;left:0;top:8px;border-top:2px solid var(--sea);transition:width .4s}
+.track .plane{position:absolute;top:-1px;font-size:15px;transform:translateX(-50%) rotate(45deg);transition:left .4s;color:var(--sea)}
+main{padding-block:24px 120px}
+section.step{display:grid;gap:20px}
+.eyebrow{font-size:.8rem;font-weight:700;color:var(--sea);letter-spacing:.1em}
+.lead{color:var(--muted)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.grid2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.grid3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
+.grid2>*,.grid3>*{min-width:0}
+figure{margin:0} figure img{display:block;width:100%;border-radius:12px;border:1px solid var(--line)}
+figcaption{font-size:.8rem;color:var(--muted);margin-top:6px}
+.hero{text-align:center;display:grid;gap:14px;justify-items:center;padding-block:12px}
+.hero img{width:150px}
+.pill{display:inline-block;background:var(--aqua);color:var(--navy);border-radius:999px;padding:2px 12px;font-size:.85rem;font-weight:700}
+label.field{display:grid;gap:6px;font-weight:700;font-size:.95rem}
+label.field small{font-weight:400;color:var(--muted)}
+input[type=text],textarea,select{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
+button{font:inherit;cursor:pointer}
+.btn{border:0;border-radius:999px;padding:12px 22px;font-weight:700;background:var(--sea);color:#fff}
+:root[data-theme="dark"] .btn{color:#06222c}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#06222c}}
+.btn.ghost{background:transparent;color:var(--sea);border:1.5px solid var(--sea)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.actionbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
+.actionbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px}
+.hint{font-size:.85rem;color:var(--muted);flex:1;text-align:center}
+/* person cards */
+.person{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:start}
+.person img{width:96px;height:96px;object-fit:cover;border-radius:50%;border:3px solid var(--aqua)}
+.person .uni{font-size:.85rem;color:var(--sea);font-weight:700}
+/* tabs / flip cards */
+.choices{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:8px 14px;font-weight:500}
+.chip[aria-pressed="true"]{border-color:var(--sea);background:var(--aqua);color:var(--navy);font-weight:700}
+.flip{display:grid;gap:8px;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:14px;padding:18px;width:100%}
+.flip .part{font-family:var(--font-display);font-weight:900;color:var(--sun);letter-spacing:.08em}
+.flip .back{color:var(--muted);font-size:.95rem}
+.flip[aria-expanded="false"] .back{display:none}
+.flip[aria-expanded="false"]::after{content:"タップして読む";font-size:.8rem;color:var(--sea)}
+.flip[aria-expanded="true"]{border-color:var(--sea)}
+/* timeline */
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.timeline li{display:grid;grid-template-columns:76px 1fr;gap:12px;padding:8px 0;border-left:2px solid var(--line);margin-left:6px;padding-left:16px;position:relative}
+.timeline li::before{content:"";position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--sea)}
+.timeline time{font-variant-numeric:tabular-nums;color:var(--sea);font-weight:700;font-size:.9rem}
+/* profile hotspot */
+.hot{position:relative}
+.hot img{display:block;width:100%;border-radius:12px}
+.spot{position:absolute;border:2px dashed var(--sun);background:transparent;border-radius:8px}
+.spot.right{border-style:solid;border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,transparent)}
+.spot.wrong{border-style:solid;border-color:var(--ng)}
+.feedback{font-weight:700;min-height:1.6em}
+.feedback.ok{color:var(--ok)} .feedback.ng{color:var(--ng)}
+/* channel types */
+details.card summary{cursor:pointer;font-weight:700;color:var(--navy);list-style:none;display:flex;gap:10px;align-items:center}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary .ic{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--aqua);font-family:var(--font-display);flex:none}
+details.card[open] summary{margin-bottom:8px}
+/* rules */
+.rule{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;cursor:pointer}
+.rule input{width:22px;height:22px;margin-top:4px;accent-color:var(--sea)}
+.rule b{display:block;color:var(--navy)}
+.rule span{color:var(--muted);font-size:.93rem}
+/* intro maker */
+.out{white-space:pre-wrap;background:var(--bg);border:1.5px dashed var(--line);border-radius:10px;padding:12px;font-size:.95rem;overflow-wrap:anywhere}
+/* quiz */
+.q{display:grid;gap:10px}
+.q .opts{display:grid;gap:8px}
+.opt{text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:10px 14px}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card))}
+.opt.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 10%,var(--card))}
+.explain{font-size:.92rem;color:var(--muted);border-left:3px solid var(--sea);padding-left:10px}
+.score{font-family:var(--font-display);font-weight:900;font-size:1.2rem;color:var(--navy)}
+/* boarding pass */
+.pass{display:grid;grid-template-columns:1fr auto;border-radius:16px;overflow:hidden;border:1.5px solid var(--line);background:var(--card)}
+.pass .main{padding:18px;display:grid;gap:10px;min-width:0}
+.pass .stub{background:var(--navy);color:var(--bg);padding:18px;display:grid;place-items:center;writing-mode:vertical-rl;font-family:var(--font-display);font-weight:900;letter-spacing:.2em;border-left:2px dashed var(--line)}
+.pass dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:0}
+.pass dt{font-size:.7rem;color:var(--muted);letter-spacing:.1em}
+.pass dd{margin:0;font-weight:700;overflow-wrap:anywhere}
+.notice{background:color-mix(in srgb,var(--sun) 18%,var(--card));border:1px solid var(--sun);border-radius:10px;padding:10px 14px;font-size:.9rem}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <img src="img/logo.png" alt="みんなの留学部">
+    <div class="route" aria-live="polite">
+      <div class="route-label"><span id="stepName">ようこそ</span><span id="stepCount">0 / 6</span></div>
+      <div class="track" aria-hidden="true"><div class="done" id="trackDone"></div><span class="plane" id="plane">✈</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- 0 -->
+<section class="step" data-name="ようこそ">
+  <div class="hero">
+    <img src="img/logo.png" alt="">
+    <h1>みんなの留学部へようこそ</h1>
+    <p class="lead">ミーティングに参加しなくても、このページで自分のペースでオリエンテーションを受けられます。</p>
+    <span class="pill">所要時間 約15分・全6ステップ</span>
+  </div>
+  <div class="card" style="display:grid;gap:12px">
+    <h3>はじめに</h3>
+    <p>最後の確認クイズに全問正解すると、Discord IDを運営に送れます。運営が確認して権限を付けると、留学部の全チャンネルが見られて、質問や投稿ができるようになります。</p>
+    <label class="field" for="nick">ニックネーム <small>このページの中で呼びかけに使うだけです</small>
+      <input type="text" id="nick" maxlength="20" placeholder="例: はると" autocomplete="nickname">
+    </label>
+  </div>
+</section>
+
+<!-- 1 -->
+<section class="step" data-name="メンバー紹介" hidden>
+  <div><p class="eyebrow">STEP 1</p><h2>運営メンバーを紹介します</h2></div>
+  <p class="lead">留学部は、海外の大学で学ぶ現役の留学生たちが運営しています。全体統括の2人をタップしてみてください。</p>
+  <div class="grid2">
+    <button class="flip" aria-expanded="false">
+      <span class="person"><img src="img/kanon.jpg" alt=""><span><h3>Kanon</h3><span class="uni">Middlebury College（アメリカ）</span></span></span>
+      <span class="back">仙台で生まれ育ち、仙台のIB校からMiddlebury Collegeに進学。笹川平和財団奨学金の一期生。</span>
+    </button>
+    <button class="flip" aria-expanded="false">
+      <span class="person"><img src="img/kota.jpg" alt=""><span><h3>Kota</h3><span class="uni">University of Sydney（オーストラリア）</span></span></span>
+      <span class="back">横浜で高校卒業までを過ごし、高校2年で留学を決意。ファンデーションコースを経てThe University of Sydneyに進学。</span>
+    </button>
+  </div>
+  <figure>
+    <img src="img/members.jpg" alt="世界地図の周りに並ぶ19人のメンターの写真">
+    <figcaption>世界各地の大学に通う19人のメンターが、Discordで質問に答えています。</figcaption>
+  </figure>
+</section>
+
+<!-- 2 -->
+<section class="step" data-name="留学部とは" hidden>
+  <div><p class="eyebrow">STEP 2</p><h2>みんなの留学部とは</h2></div>
+  <div class="card" style="background:var(--aqua);border-color:transparent">
+    <p style="font-family:var(--font-display);font-weight:700;color:var(--navy);font-size:1.1rem">挑戦を後押しする情報と機会を届け、等身大の想いに寄り添い、ロールモデルを示す伴走者である。</p>
+  </div>
+  <div>
+    <h3>3つの理念 <small style="font-weight:400;color:var(--muted)">一番共感するものを選んでみてください</small></h3>
+    <div class="choices" id="principles" style="margin-top:10px">
+      <button class="chip" aria-pressed="false" data-msg="留学部では、動画・記事・イベントで、調べても出てこない情報を届けています。">可能性を拓く情報と機会の提供</button>
+      <button class="chip" aria-pressed="false" data-msg="不安や迷いも、そのまま話して大丈夫です。メンターも同じ道を通ってきました。">等身大の想いに寄り添う</button>
+      <button class="chip" aria-pressed="false" data-msg="19人のメンターそれぞれの留学パスが、あなたの道の参考になります。">ロールモデルの可視化</button>
+    </div>
+    <p class="feedback ok" id="principleMsg" style="margin-top:8px;font-weight:500"></p>
+  </div>
+  <div class="grid2">
+    <div class="card"><h3>メディア運営</h3><p>海外大生のリアルな情報を発信。YouTube登録者2.5万人、総再生回数約200万回、Webメディアの総PV数20万回超。</p></div>
+    <div class="card"><h3>コミュニティ運営</h3><p>進学を目指す人の支援と、現役留学生の挑戦の幅を広げる2つのコミュニティを運営。2025年夏には延べ500人が参加するイベントを開催。</p></div>
+  </div>
+  <div class="card">
+    <h3>これまでの活動</h3>
+    <ol class="timeline" style="margin-top:10px">
+      <li><time>2025.06</time><span>一般社団法人 みんなの留学部 設立</span></li>
+      <li><time>2026.03</time><span>TOKYO INNOVATION BASE ブース出展</span></li>
+      <li><time>2026.04</time><span>SushiTech TOKYO ブース出展</span></li>
+      <li><time>2026.04</time><span>QS主催 留学フェアに登壇</span></li>
+      <li><time>2026.07</time><span>海外大生CONNECT</span></li>
+      <li><time>2026.07</time><span>越境キャンプ</span></li>
+    </ol>
+  </div>
+</section>
+
+<!-- 3 -->
+<section class="step" data-name="できること" hidden>
+  <div><p class="eyebrow">STEP 3</p><h2>コミュニティで何ができるの？</h2></div>
+  <p class="lead">留学部が目指すのは「留学生による、留学生のための」データプラットフォームです。3枚のカードをめくってみてください。</p>
+  <div style="display:grid;gap:12px">
+    <button class="flip" aria-expanded="false"><span class="part">PART 01</span><h3>現役海外大生とのオンラインネットワーク</h3><span class="back">調べても出てこない細かな悩みや疑問に、同じ道を歩む現役海外大生がオンラインで直接答えます。情報の一方通行をなくし、対話から生まれるリアルな学びを届けます。</span></button>
+    <button class="flip" aria-expanded="false"><span class="part">PART 02</span><h3>留学情報の一本化・可視化</h3><span class="back">留学を考えるときの判断材料、特に在学生の実体験に基づく声を一か所に集めます。海外大にまつわる情報がすべて見えるプラットフォームを作っています。</span></button>
+    <button class="flip" aria-expanded="false"><span class="part">PART 03</span><h3>「繋ぐ」機会の提供</h3><span class="back">イベントや学生サポートを通じて、学生と企業・教育機関、そして学生同士がつながる架け橋になります。</span></button>
+  </div>
+  <p class="hint" id="flipHint">あと3枚</p>
+</section>
+
+<!-- 4 -->
+<section class="step" data-name="Discordの使い方" hidden>
+  <div><p class="eyebrow">STEP 4</p><h2>Discordの使い方</h2></div>
+  <p>Discordは、個人やグループでテキスト・音声・ビデオ通話ができるアプリです。留学部の活動はここが中心です。</p>
+  <div class="card" style="display:grid;gap:12px">
+    <h3>プロフィールの見方</h3>
+    <p>プロフィールには「サーバーで表示される名前」と「Discord ID」があります。Discord IDはInstagramのユーザーIDのようなもので、人によって重ならない英数字です。<b>下の画像で、Discord IDの部分をタップしてください。</b></p>
+    <div class="hot" id="hot">
+      <img src="img/profile.jpg" alt="Discordのプロフィール画面の例。アイコン、表示名 sara、その下に iz.sara.one_98902 と表示されている">
+      <button class="spot" data-k="status" aria-label="アイコン右下の緑の丸" style="left:24%;top:46%;width:9%;height:14%"></button>
+      <button class="spot" data-k="name" aria-label="太字の名前 sara" style="left:3%;top:68%;width:16%;height:12%"></button>
+      <button class="spot" data-k="id" aria-label="名前の下の英数字 iz.sara.one_98902" style="left:3%;top:82%;width:41%;height:12%"></button>
+    </div>
+    <p class="feedback" id="hotMsg" aria-live="polite"></p>
+  </div>
+  <figure>
+    <img src="img/campus.jpg" alt="オリエンテーション前は数チャンネルしか見えず、後はたくさんのチャンネルが見えるようになる比較画像">
+    <figcaption>今見えているのは一部のチャンネルだけです。オリエンテーションが終わると、交流や相談のチャンネルがすべて見えるようになります。</figcaption>
+  </figure>
+  <div style="display:grid;gap:10px">
+    <h3>3種類のチャンネル</h3>
+    <details class="card"><summary><span class="ic">#</span>テキストチャンネル</summary><p>メッセージでやりとりする場所です。お知らせやおしゃべり、自己紹介などに使います。@でメンションすると相手に通知が届きます。</p></details>
+    <details class="card"><summary><span class="ic">💬</span>フォーラムチャンネル</summary><p>テーマごとにスレッドを立てて質問・相談する場所です。たとえば「地域別相談室」には、アメリカ・アジア・ヨーロッパ・オーストラリアなど地域別のスレッドがあります。</p></details>
+    <details class="card"><summary><span class="ic">🔊</span>ボイスチャンネル</summary><p>入るだけでリアルタイムに音声通話や画面共有ができます。「雑談」や「作業ルーム」があります。</p></details>
+  </div>
+  <figure><img src="img/channels.jpg" alt="テキスト・フォーラム・ボイスチャンネルの実際の画面例"><figcaption>実際の画面の例</figcaption></figure>
+</section>
+
+<!-- 5 -->
+<section class="step" data-name="ルールとはじめの一歩" hidden>
+  <div><p class="eyebrow">STEP 5</p><h2>ルールとはじめの一歩</h2></div>
+  <p class="lead">みんなの悩みや質問をスピーディーに解決し、よりよいコミュニティにするための5つのルールです。読んだらチェックを入れてください。</p>
+  <div class="card" style="display:grid;gap:14px" id="rules">
+    <label class="rule"><input type="checkbox" id="r1"><span><b>留学に関する質問は、みんなが見えるチャンネルで</b><span>「一人の質問はみんなの質問」。#地域別相談室 や #奨学金 などで質問すると、ほかの部員も情報を得られて助け合えます。</span></span></label>
+    <label class="rule"><input type="checkbox" id="r2"><span><b>最低限のリスペクトを</b><span>発言するときは、メンターやほかの部員へのリスペクトを忘れずに。</span></span></label>
+    <label class="rule"><input type="checkbox" id="r3"><span><b>部員同士でも情報交換しよう</b><span>みんなの役に立ちそうな情報はどんどんシェアして、仲間の輪を広げましょう。</span></span></label>
+    <label class="rule"><input type="checkbox" id="r4"><span><b>一緒にコミュニティを盛り上げよう</b><span>気になる投稿には返信やリアクションをしてみましょう。</span></span></label>
+    <label class="rule"><input type="checkbox" id="r5"><span><b>個人的な質問はKotaかKanonへ</b><span>個人的な質問や相談は、KotaかKanonにDMしてください。</span></span></label>
+  </div>
+
+  <div class="card" style="display:grid;gap:12px">
+    <p class="eyebrow">はじめの一歩 1</p>
+    <h3>自己紹介文を作っておこう</h3>
+    <p>権限がついたら「自己紹介（部員）」チャンネルに投稿します。ここで書いておけば、コピーして貼るだけです。</p>
+    <div class="grid2">
+      <label class="field" for="i-name">お名前、ニックネーム<input type="text" id="i-name" placeholder="例: はると"></label>
+      <label class="field" for="i-grade">学年<input type="text" id="i-grade" placeholder="例: 高校2年"></label>
+      <label class="field" for="i-country">どんな国に行ってみたい？<input type="text" id="i-country" placeholder="例: アメリカ、カナダ"></label>
+      <label class="field" for="i-status">留学のステータス
+        <select id="i-status"><option>興味あり！</option><option>情報収集中</option><option>準備中</option><option>応募中</option><option>進学先決定</option></select>
+      </label>
+    </div>
+    <label class="field" for="i-field">興味あるプログラムや専攻<input type="text" id="i-field" placeholder="例: 環境学、交換留学"></label>
+    <label class="field" for="i-msg">意気込み<textarea id="i-msg" rows="2" placeholder="例: 奨学金について情報を集めたいです！よろしくお願いします！"></textarea></label>
+    <div class="out" id="introOut"></div>
+    <div><button class="btn ghost" id="copyIntro" type="button">コピーする</button> <span class="feedback ok" id="copyMsg"></span></div>
+  </div>
+
+  <div class="card" style="display:grid;gap:10px">
+    <p class="eyebrow">はじめの一歩 2</p>
+    <h3>質問・相談してみよう</h3>
+    <div class="grid2">
+      <div><b>「この大学について知りたい」「この国での生活が知りたい」</b><p class="lead">特定の留学先についての質問は、地域別相談室へ。</p></div>
+      <div><b>「このメンターの留学パスを詳しく聞きたい」</b><p class="lead">特定のメンターへの質問は、メンターをメンションして聞きましょう。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 -->
+<section class="step" data-name="確認クイズ" hidden>
+  <div><p class="eyebrow">STEP 6</p><h2>確認クイズ</h2></div>
+  <p class="lead">こんなとき、どうする？ 全問正解でDiscord IDを送れるようになります。間違えても何度でも選び直せます。</p>
+  <div id="quiz" style="display:grid;gap:14px"></div>
+  <p class="score" id="score" aria-live="polite"></p>
+</section>
+
+<!-- 7 -->
+<section class="step" data-name="Discord IDを送る" hidden>
+  <div><p class="eyebrow">最後のステップ</p><h2>Discord IDを送ろう</h2></div>
+  <p>運営がこのIDでDiscordを検索して、チャンネルの権限を付けます。表示名ではなく、プロフィールの名前の下にある英数字のIDを入力してください。</p>
+  <form class="card" id="submitForm" style="display:grid;gap:14px" novalidate>
+    <label class="field" for="discordId">Discord ID <small>例: iz.sara.one_98902（Discordアプリでアイコンをタップすると表示されます）</small>
+      <input type="text" id="discordId" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="your.discord_id">
+    </label>
+    <label class="field" for="displayName">サーバーでの表示名 <small>任意。運営が見つけやすくなります</small>
+      <input type="text" id="displayName" placeholder="例: sara">
+    </label>
+    <p class="feedback ng" id="formMsg" aria-live="polite"></p>
+    <div><button class="btn" type="submit" id="sendBtn">送信する</button></div>
+  </form>
+  <p class="notice" id="previewNote" hidden>プレビュー版のため、送信先のGoogleフォームはまだつながっていません。送信すると完了画面だけ表示されます。</p>
+</section>
+
+<!-- 8 -->
+<section class="step" data-name="完了" hidden>
+  <div class="hero">
+    <h1>オリエンテーション完了です</h1>
+    <p class="lead" id="doneLead">ご参加ありがとうございました。</p>
+  </div>
+  <div class="pass">
+    <div class="main">
+      <span class="pill" style="justify-self:start">BOARDING PASS</span>
+      <dl>
+        <div><dt>PASSENGER</dt><dd id="passName">-</dd></div>
+        <div><dt>DISCORD ID</dt><dd id="passId">-</dd></div>
+        <div><dt>FROM</dt><dd>オリエンテーション</dd></div>
+        <div><dt>TO</dt><dd>留学部 campus</dd></div>
+      </dl>
+    </div>
+    <div class="stub">留学部</div>
+  </div>
+  <div class="card" style="display:grid;gap:8px">
+    <h3>このあとの流れ</h3>
+    <ol style="margin:0;padding-left:1.3em">
+      <li>運営がDiscord IDを確認して、チャンネルの権限を付けます。</li>
+      <li>Discordを開くと、交流・相談のチャンネルが見えるようになります。</li>
+      <li>「自己紹介（部員）」に、作っておいた自己紹介を投稿しましょう。</li>
+    </ol>
+    <p class="lead">しばらくたっても見えるチャンネルが増えない場合は、Discordの「質問・お問い合わせ」チャンネルで声をかけてください。</p>
+  </div>
+</section>
+
+</main>
+
+<div class="actionbar"><div class="wrap">
+  <button class="btn ghost" id="back" type="button">戻る</button>
+  <span class="hint" id="gateHint"></span>
+  <button class="btn" id="next" type="button">はじめる</button>
+</div></div>
+
+<script src="content.js"></script>
+<script>
+
+const store = {
+  get(){ try{ return JSON.parse(localStorage.getItem("ryugakubu-orientation")||"{}"); }catch(e){ return {}; } },
+  set(v){ try{ localStorage.setItem("ryugakubu-orientation", JSON.stringify(v)); }catch(e){} }
+};
+const state = Object.assign({step:0, nick:"", hot:false, flips:[], quiz:{}, rules:[], intro:{}, sent:null}, store.get());
+const save = () => store.set(state);
+
+const steps = [...document.querySelectorAll("section.step")];
+const LAST_CONTENT = 6;               // quiz step
+const $ = id => document.getElementById(id);
+
+function gate(i){
+  if(i===3){ const n = 3 - state.flips.length; return n>0 ? `あと${n}枚めくってください` : ""; }
+  if(i===4) return state.hot ? "" : "Discord IDの場所をタップしてください";
+  if(i===5){ const n = 5 - state.rules.length; return n>0 ? `ルールにあと${n}つチェック` : ""; }
+  if(i===6){ const ok = QUIZ.filter((q,k)=>state.quiz[k]===q.a).length; return ok<QUIZ.length ? `${ok} / ${QUIZ.length} 問正解` : ""; }
+  return "";
+}
+
+function render(){
+  const i = state.step;
+  steps.forEach((s,k)=> s.hidden = k!==i);
+  const shown = Math.min(i, LAST_CONTENT);
+  $("stepName").textContent = steps[i].dataset.name;
+  $("stepCount").textContent = i>=7 ? "6 / 6" : `${shown} / 6`;
+  const pct = (i>=7 ? 100 : shown/6*100);
+  $("trackDone").style.width = pct+"%";
+  $("plane").style.left = Math.max(2, Math.min(98, pct))+"%";
+  const g = gate(i);
+  $("gateHint").textContent = g;
+  $("back").hidden = i===0 || i===8;
+  const next = $("next");
+  next.hidden = i>=7;
+  next.disabled = !!g;
+  next.textContent = i===0 ? "はじめる" : i===LAST_CONTENT ? "Discord IDを送る" : "次へ";
+  if(i===7) $("previewNote").hidden = !!(FORM.action && FORM.discordId);
+  if(i===8){
+    $("passName").textContent = state.nick || "部員";
+    $("passId").textContent = state.sent ? state.sent.id : "-";
+    $("doneLead").textContent = (state.nick ? state.nick+"さん、" : "") + "ご参加ありがとうございました。";
+  }
+}
+function go(d){ state.step = Math.max(0, Math.min(8, state.step+d)); save(); render(); window.scrollTo({top:0}); }
+$("next").onclick = ()=>{ if(state.step===0){ state.nick = $("nick").value.trim(); } go(1); };
+$("back").onclick = ()=> go(-1);
+
+// step 0
+$("nick").value = state.nick;
+$("nick").addEventListener("input", e=>{ state.nick = e.target.value.trim(); save(); });
+
+// flip cards (step 1 and 3)
+document.querySelectorAll(".flip").forEach((b,k)=>{
+  const inStep3 = b.closest("section").dataset.name==="できること";
+  if(inStep3 && state.flips.includes(k)) b.setAttribute("aria-expanded","true");
+  b.onclick = ()=>{
+    const open = b.getAttribute("aria-expanded")!=="true";
+    b.setAttribute("aria-expanded", String(open));
+    if(inStep3 && open && !state.flips.includes(k)){ state.flips.push(k); save(); }
+    if(inStep3){ const n = 3-state.flips.length; $("flipHint").textContent = n>0 ? `あと${n}枚` : "全部読みました"; }
+    render();
+  };
+});
+$("flipHint").textContent = 3-state.flips.length>0 ? `あと${3-state.flips.length}枚` : "全部読みました";
+
+// principles
+document.querySelectorAll("#principles .chip").forEach(c=> c.onclick = ()=>{
+  document.querySelectorAll("#principles .chip").forEach(x=>x.setAttribute("aria-pressed","false"));
+  c.setAttribute("aria-pressed","true"); $("principleMsg").textContent = c.dataset.msg;
+});
+
+// profile hotspot
+const HOT = {status:"そこは今のステータス（オンラインなど）です。もう一度探してみてください。",
+             name:"そこはサーバーで表示される名前です。人と重なることもあります。",
+             id:"正解！ 名前の下の英数字がDiscord IDです。最後にこれを入力します。"};
+document.querySelectorAll(".spot").forEach(s=> s.onclick = ()=>{
+  document.querySelectorAll(".spot").forEach(x=>x.classList.remove("right","wrong"));
+  const ok = s.dataset.k==="id";
+  s.classList.add(ok?"right":"wrong");
+  $("hotMsg").textContent = HOT[s.dataset.k];
+  $("hotMsg").className = "feedback " + (ok?"ok":"ng");
+  if(ok){ state.hot = true; save(); }
+  render();
+});
+if(state.hot){ document.querySelector('.spot[data-k="id"]').classList.add("right"); $("hotMsg").textContent = HOT.id; $("hotMsg").className="feedback ok"; }
+
+// rules
+["r1","r2","r3","r4","r5"].forEach(id=>{
+  const el = $(id); el.checked = state.rules.includes(id);
+  el.onchange = ()=>{ state.rules = state.rules.filter(r=>r!==id); if(el.checked) state.rules.push(id); save(); render(); };
+});
+
+// intro maker
+const IF = ["i-name","i-grade","i-country","i-status","i-field","i-msg"];
+function introText(){
+  const v = id => ($(id).value||"").trim();
+  return `【お名前、ニックネーム】${v("i-name")}\n【学年】${v("i-grade")}\n【どんな国行ってみたい？】${v("i-country")}\n【留学のステータス】${v("i-status")}\n【興味あるプログラムや専攻】${v("i-field")}\n【意気込み】${v("i-msg")}`;
+}
+IF.forEach(id=>{
+  if(state.intro[id]!=null) $(id).value = state.intro[id];
+  $(id).addEventListener("input", ()=>{ state.intro[id] = $(id).value; save(); $("introOut").textContent = introText(); });
+});
+if(!state.intro["i-name"] && state.nick) $("i-name").value = state.nick;
+$("introOut").textContent = introText();
+$("copyIntro").onclick = ()=>{
+  const t = introText();
+  const done = ()=> $("copyMsg").textContent = "コピーしました";
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(done, selectOut);
+  } else selectOut();
+  function selectOut(){ const r = document.createRange(); r.selectNodeContents($("introOut")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("copyMsg").textContent = "選択しました。長押しかCtrl+Cでコピーしてください"; }
+};
+
+// quiz
+const quizEl = $("quiz");
+QUIZ.forEach((item,k)=>{
+  const box = document.createElement("div"); box.className = "card q";
+  box.innerHTML = `<h3>Q${k+1}. ${item.q}</h3><div class="opts"></div><p class="explain" hidden></p>`;
+  const opts = box.querySelector(".opts"), ex = box.querySelector(".explain");
+  item.o.forEach((o,j)=>{
+    const b = document.createElement("button"); b.type="button"; b.className="opt"; b.textContent=o;
+    b.onclick = ()=>{
+      opts.querySelectorAll(".opt").forEach(x=>x.classList.remove("right","wrong"));
+      const ok = j===item.a; b.classList.add(ok?"right":"wrong");
+      ex.hidden = false; ex.textContent = (ok?"正解！ ":"ちがいます。もう一度選んでみてください。 ") + (ok?item.e:"");
+      state.quiz[k] = j; save(); score(); render();
+    };
+    opts.appendChild(b);
+    if(state.quiz[k]===j){ b.classList.add(j===item.a?"right":"wrong"); ex.hidden=false; ex.textContent = j===item.a ? "正解！ "+item.e : "ちがいます。もう一度選んでみてください。"; }
+  });
+  quizEl.appendChild(box);
+});
+function score(){ const ok = QUIZ.filter((q,k)=>state.quiz[k]===q.a).length; $("score").textContent = ok===QUIZ.length ? "全問正解！ 次はDiscord IDを送りましょう。" : ""; }
+score();
+
+// submit
+$("submitForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const id = $("discordId").value.trim().replace(/^@/,"").toLowerCase();
+  const msg = $("formMsg");
+  if(!/^[a-z0-9._]{2,32}$/.test(id)){
+    msg.textContent = "Discord IDは2〜32文字の半角英小文字・数字・ピリオド・アンダースコアです。表示名ではなく、その下の英数字を入力してください。";
+    $("discordId").focus(); return;
+  }
+  msg.textContent = "";
+  $("sendBtn").disabled = true; $("sendBtn").textContent = "送信中…";
+  if(FORM.action && FORM.discordId){
+    const fd = new FormData();
+    fd.append(FORM.discordId, id);
+    if(FORM.displayName) fd.append(FORM.displayName, $("displayName").value.trim());
+    if(FORM.nickname) fd.append(FORM.nickname, state.nick);
+    try{ await fetch(FORM.action, {method:"POST", mode:"no-cors", body:fd}); }
+    catch(err){
+      msg.textContent = "送信できませんでした。通信状況を確認して、もう一度送信してください。";
+      $("sendBtn").disabled = false; $("sendBtn").textContent = "送信する"; return;
+    }
+  }
+  state.sent = {id, at:new Date().toISOString()}; state.step = 8; save(); render(); window.scrollTo({top:0});
+  $("sendBtn").disabled = false; $("sendBtn").textContent = "送信する";
+});
+
+render();
+</script>
+
+</body>
+</html>
