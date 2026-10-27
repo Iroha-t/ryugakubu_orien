@@ -4,378 +4,434 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>留学部オリエンテーション</title>
-<meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex, nofollow, noimageindex">
+<meta name="theme-color" content="#187496">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<script>
+  // Tailwind: preflight off so it doesn't reset the hand-written styles below.
+  window.tailwind = { config: { corePlugins: { preflight: false }, theme: { extend: {
+    colors: { brand: "#187496", accent: "#FF914D", sub: "#30BFC5", mist: "#D0F5F6", peach: "#FFEADD" },
+    fontFamily: { maru: ['"Zen Maru Gothic"', "sans-serif"] } } } } };
+</script>
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/canvas-confetti/1.9.3/confetti.browser.min.js"></script>
+<script src="https://unpkg.com/lucide@0.460.0/dist/umd/lucide.min.js"></script>
 <style>
-/* Layout: one step per screen, a flight-route progress bar on top, a fixed action bar at the bottom. */
+/* Layout: one gate (step) per screen. A live boarding pass sits under the header,
+   a thumb-reach action bar sits at the bottom. */
 :root{
-  --navy:#0b3561; --sea:#13809e; --aqua:#dff1f4; --sun:#f5a53a; --ok:#1f8a5b; --ng:#c2463a;
-  --bg:#f3f8f9; --card:#ffffff; --fg:#14283b; --muted:#557083; --line:#cfe1e6;
-  --font-display:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
+  --brand:#187496; --brand-deep:#0f5470; --accent:#FF914D; --sub:#30BFC5;
+  --bg:#F9FBFB; --mist:#D0F5F6; --peach:#FFEADD;
+  --card:#ffffff; --fg:#173246; --muted:#5a7484; --line:#d6e7ea;
+  --ok:#1f9a6a; --ng:#d9534a; --discord:#313338; --discord-2:#2b2d31; --discord-fg:#dbdee1;
+  --font-head:"Zen Maru Gothic","Hiragino Maru Gothic ProN","Noto Sans JP",sans-serif;
   --font-body:"Noto Sans JP","Hiragino Sans","Yu Gothic",sans-serif;
+  --font-stamp:"Dela Gothic One","Zen Maru Gothic",sans-serif;
+  --glow:color-mix(in srgb,var(--brand) 35%,transparent);
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --navy:#9fd3e6; --sea:#4fb7d3; --aqua:#16323f; --sun:#f5b25a; --ok:#4cc38a; --ng:#ef7b6f;
-  --bg:#0b1a26; --card:#122633; --fg:#e4eef2; --muted:#93acba; --line:#24414f; color-scheme:dark}}
+  --brand:#4cb3d4; --brand-deep:#9fdcef; --accent:#ffa36b; --sub:#47d0d5;
+  --bg:#0c1a22; --mist:#123440; --peach:#3a2a20; --card:#13252f; --fg:#e6f1f4; --muted:#9ab3bf; --line:#24404c;
+  --ok:#4cc996; --ng:#ff7f75; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --navy:#9fd3e6; --sea:#4fb7d3; --aqua:#16323f; --sun:#f5b25a; --ok:#4cc38a; --ng:#ef7b6f;
-  --bg:#0b1a26; --card:#122633; --fg:#e4eef2; --muted:#93acba; --line:#24414f; color-scheme:dark}
+  --brand:#4cb3d4; --brand-deep:#9fdcef; --accent:#ffa36b; --sub:#47d0d5;
+  --bg:#0c1a22; --mist:#123440; --peach:#3a2a20; --card:#13252f; --fg:#e6f1f4; --muted:#9ab3bf; --line:#24404c;
+  --ok:#4cc996; --ng:#ff7f75; color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-body{background:var(--bg);color:var(--fg);font-family:var(--font-body);font-size:16px;line-height:1.8;margin:0}
-h1,h2,h3{font-family:var(--font-display);color:var(--navy);text-wrap:balance;line-height:1.4;margin:0}
-h1{font-size:1.9rem;font-weight:900} h2{font-size:1.5rem;font-weight:900} h3{font-size:1.1rem;font-weight:700}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:var(--font-body);font-size:16px;line-height:1.8;color:var(--fg);
+  background:radial-gradient(70vmax 45vmax at 110% -10%,color-mix(in srgb,var(--sub) 18%,transparent),transparent 60%),
+             radial-gradient(60vmax 45vmax at -20% 110%,color-mix(in srgb,var(--accent) 14%,transparent),transparent 60%),var(--bg);
+  background-attachment:fixed;-webkit-tap-highlight-color:transparent}
+h1,h2,h3{font-family:var(--font-head);font-weight:900;color:var(--brand-deep);line-height:1.4;margin:0;text-wrap:balance}
+h1{font-size:2rem} h2{font-size:1.5rem} h3{font-size:1.1rem}
 p{margin:0}
+img{max-width:100%}
+button{font:inherit;cursor:pointer;color:inherit}
 .wrap{max-width:720px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ---------- header ---------- */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--card)}
-header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
-header .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
-header img{width:40px;height:40px}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:8;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:10px;padding-block:8px}
+header.top img{width:36px;height:36px}
 .route{flex:1;min-width:0}
-.route-label{font-size:.75rem;color:var(--muted);letter-spacing:.06em;display:flex;justify-content:space-between}
-.track{position:relative;height:18px;margin-top:2px}
-.track::before{content:"";position:absolute;left:0;right:0;top:8px;border-top:2px dashed var(--line)}
-.track .done{position:absolute;left:0;top:8px;border-top:2px solid var(--sea);transition:width .4s}
-.track .plane{position:absolute;top:-1px;font-size:15px;transform:translateX(-50%) rotate(45deg);transition:left .4s;color:var(--sea)}
-main{padding-block:24px 120px}
-section.step{display:grid;gap:20px}
-.eyebrow{font-size:.8rem;font-weight:700;color:var(--sea);letter-spacing:.1em}
+.route-label{font-size:.72rem;color:var(--muted);letter-spacing:.05em;display:flex;justify-content:space-between;gap:8px}
+.route-label span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.track{position:relative;height:16px}
+.track::before{content:"";position:absolute;left:0;right:0;top:7px;border-top:2px dashed var(--line)}
+.track .done{position:absolute;left:0;top:7px;border-top:2px solid var(--brand);transition:width .8s cubic-bezier(.6,0,.2,1)}
+.track .plane{position:absolute;top:-3px;color:var(--brand);transform:translateX(-50%);transition:left .8s cubic-bezier(.6,0,.2,1)}
+.track .plane svg{width:16px;height:16px;transform:rotate(45deg)}
+.iconbtn{width:44px;height:44px;border-radius:50%;border:1.5px solid var(--line);background:var(--card);display:grid;place-items:center;flex:none;transition:transform .15s}
+.iconbtn:active{transform:scale(.92)}
+.iconbtn svg{width:20px;height:20px;color:var(--brand)}
+
+/* ---------- live boarding pass ---------- */
+.passbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 61px);z-index:7;padding-block:8px}
+.ticket{position:relative;display:grid;grid-template-columns:1fr auto;border-radius:16px;background:var(--card);border:1.5px solid var(--line);box-shadow:0 12px 30px -20px var(--glow);overflow:hidden}
+.ticket::before,.ticket::after{content:"";position:absolute;width:18px;height:18px;border-radius:50%;background:var(--bg);right:84px;border:1.5px solid var(--line)}
+.ticket::before{top:-10px}.ticket::after{bottom:-10px}
+.t-main{padding:10px 14px;min-width:0;display:grid;gap:6px}
+.t-row{display:flex;align-items:center;gap:8px;min-width:0}
+.t-brand{font-family:var(--font-stamp);font-size:.72rem;letter-spacing:.12em;color:var(--brand)}
+.t-toggle{margin-left:auto;border:0;background:none;display:flex;align-items:center;gap:4px;font-size:.75rem;color:var(--muted);padding:6px;min-height:36px}
+.t-toggle svg{width:16px;height:16px;transition:transform .3s}
+.ticket.open .t-toggle svg{transform:rotate(180deg)}
+.t-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}
+.ticket:not(.open) .t-fields .t-more{display:none}
+.t-f dt{font-size:.6rem;color:var(--muted);letter-spacing:.14em}
+.t-f dd{margin:0;font-weight:700;font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.t-f dd.printed{animation:print .7s steps(6)}
+@keyframes print{0%{clip-path:inset(0 100% 0 0);color:var(--accent)}100%{clip-path:inset(0 0 0 0)}}
+.t-stub{width:84px;border-left:2px dashed var(--line);display:grid;place-items:center;padding:8px;background:linear-gradient(160deg,var(--brand),var(--sub));color:#fff;text-align:center}
+.t-stub b{font-family:var(--font-stamp);font-size:1.4rem;line-height:1;display:block}
+.t-stub small{font-size:.6rem;letter-spacing:.12em;display:block}
+.stamps{display:flex;gap:6px;flex-wrap:wrap}
+.stamp-slot{position:relative;width:30px;height:30px;border-radius:50%;border:1.5px dashed var(--line);display:grid;place-items:center;font-size:.55rem;color:var(--muted);font-weight:700}
+.stamp-slot.on{border:2px solid var(--accent);color:var(--accent);background:color-mix(in srgb,var(--accent) 12%,var(--card));font-family:var(--font-stamp);transform:rotate(-12deg)}
+.stamp-slot.just{animation:stampin .55s cubic-bezier(.3,1.8,.5,1)}
+@keyframes stampin{0%{transform:scale(2.6) rotate(-30deg);opacity:0}100%{transform:scale(1) rotate(-12deg);opacity:1}}
+.stamper{position:fixed;z-index:50;pointer-events:none;color:var(--accent);filter:drop-shadow(0 6px 8px rgba(0,0,0,.25))}
+.stamper svg{width:34px;height:34px}
+.ticket.bump{animation:bump .5s}
+@keyframes bump{40%{transform:translateY(3px) scale(1.01)}}
+
+/* ---------- steps ---------- */
+main{padding-block:12px 130px}
+section.step{display:grid;gap:18px}
+section.step:not([hidden])>*{animation:rise .55s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.stephead{display:flex;align-items:center;gap:14px}
+.stephead .num{font-family:var(--font-stamp);font-size:3rem;line-height:1;color:transparent;-webkit-text-stroke:2px var(--brand);flex:none}
+.eyebrow{font-size:.75rem;font-weight:700;color:var(--accent);letter-spacing:.16em}
 .lead{color:var(--muted)}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:20px;padding:18px;display:grid;gap:12px;min-width:0}
 .grid2{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
-.grid3{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr))}
-.grid2>*,.grid3>*{min-width:0}
-figure{margin:0} figure img{display:block;width:100%;border-radius:12px;border:1px solid var(--line)}
+.grid2>*{min-width:0}
+figure{margin:0} figure img{display:block;width:100%;border-radius:14px;border:1px solid var(--line);cursor:zoom-in}
 figcaption{font-size:.8rem;color:var(--muted);margin-top:6px}
-.hero{text-align:center;display:grid;gap:14px;justify-items:center;padding-block:12px}
-.hero img{width:150px}
-.pill{display:inline-block;background:var(--aqua);color:var(--navy);border-radius:999px;padding:2px 12px;font-size:.85rem;font-weight:700}
-label.field{display:grid;gap:6px;font-weight:700;font-size:.95rem}
-label.field small{font-weight:400;color:var(--muted)}
-input[type=text],textarea,select{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
-input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--sun);outline-offset:2px}
-button{font:inherit;cursor:pointer}
-.btn{border:0;border-radius:999px;padding:12px 22px;font-weight:700;background:var(--sea);color:#fff}
-:root[data-theme="dark"] .btn{color:#06222c}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{color:#06222c}}
-.btn.ghost{background:transparent;color:var(--sea);border:1.5px solid var(--sea)}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--mist);color:var(--brand-deep);border-radius:999px;padding:3px 12px;font-size:.82rem;font-weight:700;justify-self:start}
+.btn{border:0;border-radius:999px;min-height:52px;padding:0 26px;font-weight:700;background:var(--brand);color:#fff;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .15s, box-shadow .2s;box-shadow:0 8px 18px -8px var(--glow)}
+:root[data-theme="dark"] .btn:not(.ghost){color:#04232e}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.ghost){color:#04232e}}
+.btn:not(:disabled):active{transform:scale(.95)}
+.btn.ghost{background:transparent;color:var(--brand);border:1.5px solid var(--brand);box-shadow:none}
+.btn.accent{background:var(--accent);color:#3a1600}
 .btn:disabled{opacity:.4;cursor:not-allowed}
-.actionbar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px);z-index:5}
-.actionbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:12px}
-.hint{font-size:.85rem;color:var(--muted);flex:1;text-align:center}
-/* person cards */
-.person{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:start}
-.person img{width:96px;height:96px;object-fit:cover;border-radius:50%;border:3px solid var(--aqua)}
-.person .uni{font-size:.85rem;color:var(--sea);font-weight:700}
-/* tabs / flip cards */
+.btn svg{width:18px;height:18px}
+#next:not(:disabled){background:linear-gradient(100deg,var(--brand),var(--sub));background-size:200% 100%;animation:shine 3s ease-in-out infinite}
+#next.unlocked{animation:pop .5s cubic-bezier(.3,1.6,.5,1),shine 3s ease-in-out infinite}
+@keyframes shine{0%,100%{background-position:0 0}50%{background-position:100% 0}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
 .choices{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:999px;padding:8px 14px;font-weight:500}
-.chip[aria-pressed="true"]{border-color:var(--sea);background:var(--aqua);color:var(--navy);font-weight:700}
-.flip{display:grid;gap:8px;text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:14px;padding:18px;width:100%}
-.flip .part{font-family:var(--font-display);font-weight:900;color:var(--sun);letter-spacing:.08em}
-.flip .back{color:var(--muted);font-size:.95rem}
-.flip[aria-expanded="false"] .back{display:none}
-.flip[aria-expanded="false"]::after{content:"タップして読む";font-size:.8rem;color:var(--sea)}
-.flip[aria-expanded="true"]{border-color:var(--sea)}
-/* timeline */
-.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0}
-.timeline li{display:grid;grid-template-columns:76px 1fr;gap:12px;padding:8px 0;border-left:2px solid var(--line);margin-left:6px;padding-left:16px;position:relative}
-.timeline li::before{content:"";position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--sea)}
-.timeline time{font-variant-numeric:tabular-nums;color:var(--sea);font-weight:700;font-size:.9rem}
-/* profile hotspot */
-.hot{position:relative}
-.hot img{display:block;width:100%;border-radius:12px}
-.spot{position:absolute;border:2px dashed var(--sun);background:transparent;border-radius:8px}
-.spot.right{border-style:solid;border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,transparent)}
-.spot.wrong{border-style:solid;border-color:var(--ng)}
+.chip{min-height:44px;border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:6px 16px;font-weight:500;transition:transform .15s,background .2s,border-color .2s}
+.chip:active{transform:scale(.95)}
+.chip[aria-pressed="true"]{border-color:var(--brand);background:var(--mist);color:var(--brand-deep);font-weight:700}
+.field{display:grid;gap:6px;font-weight:700;font-size:.95rem}
+.field small{font-weight:400;color:var(--muted)}
+input[type=text],textarea,select{font:inherit;color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:12px;padding:12px 14px;width:100%;min-height:48px}
+.opt{text-align:left;min-height:52px;border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:10px 16px;transition:transform .15s}
+.opt:active{transform:scale(.97)}
+.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card));animation:pop .4s}
+.opt.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 10%,var(--card));animation:shake .4s}
+.explain{font-size:.92rem;color:var(--muted);border-left:3px solid var(--brand);padding-left:10px}
 .feedback{font-weight:700;min-height:1.6em}
 .feedback.ok{color:var(--ok)} .feedback.ng{color:var(--ng)}
-/* channel types */
-details.card summary{cursor:pointer;font-weight:700;color:var(--navy);list-style:none;display:flex;gap:10px;align-items:center}
-details.card summary::-webkit-details-marker{display:none}
-details.card summary .ic{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--aqua);font-family:var(--font-display);flex:none}
-details.card[open] summary{margin-bottom:8px}
-.compare{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.compare>figure{display:grid;gap:8px;min-width:0;justify-items:start}
-.shots{display:flex;gap:8px;align-items:flex-start;min-width:0;flex-wrap:wrap;margin-block:8px}
-.shots img,img.shot{display:block;max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:#1e1f22}
-.compare .shots img:first-child{width:70%}.compare .shots img:last-child{width:100%}
-img.shot{margin-top:8px}
-.shots img.small{max-width:55%}
-.credit{font-size:.75rem;color:var(--muted)}
-.credit a{color:var(--sea)}
-/* guess / sort / toggle */
-.seg{display:inline-grid;grid-auto-flow:column;background:var(--aqua);border-radius:999px;padding:4px;gap:4px;justify-self:start}
-.seg button{border:0;background:transparent;color:var(--navy);border-radius:999px;padding:6px 14px;font-weight:700}
-.seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 3px color-mix(in srgb,var(--navy) 25%,transparent)}
-.reveal{display:grid;gap:6px;border-left:3px solid var(--sea);padding-left:12px}
-.big{font-family:var(--font-display);font-weight:900;font-size:2rem;color:var(--sea);line-height:1.2;font-variant-numeric:tabular-nums}
-.sortq{display:grid;gap:8px;padding-block:12px;border-top:1px solid var(--line)}
-.sortq:first-of-type{border-top:0}
-.sortq .opts{display:flex;flex-wrap:wrap;gap:8px}
-.sortq .opt{flex:1 1 0;min-width:0;text-align:center;padding:10px 4px;white-space:nowrap;font-size:.9rem}
-.next-steps{display:grid;gap:10px;margin:0;padding:0;list-style:none}
-.next-steps li{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
-.next-steps .n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--sea);color:var(--card);font-weight:700;font-size:.9rem}
-#confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
-/* rules */
-.rule{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;cursor:pointer}
-.rule input{width:22px;height:22px;margin-top:4px;accent-color:var(--sea)}
-.rule b{display:block;color:var(--navy)}
-.rule span{color:var(--muted);font-size:.93rem}
-/* intro maker */
-.out{white-space:pre-wrap;background:var(--bg);border:1.5px dashed var(--line);border-radius:10px;padding:12px;font-size:.95rem;overflow-wrap:anywhere}
-/* quiz */
-.q{display:grid;gap:10px}
-.q .opts{display:grid;gap:8px}
-.opt{text-align:left;border:1.5px solid var(--line);background:var(--card);color:var(--fg);border-radius:10px;padding:10px 14px}
-.opt.right{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 14%,var(--card))}
-.opt.wrong{border-color:var(--ng);background:color-mix(in srgb,var(--ng) 10%,var(--card))}
-.explain{font-size:.92rem;color:var(--muted);border-left:3px solid var(--sea);padding-left:10px}
-.score{font-family:var(--font-display);font-weight:900;font-size:1.2rem;color:var(--navy)}
-/* boarding pass */
-.pass{display:grid;grid-template-columns:1fr auto;border-radius:16px;overflow:hidden;border:1.5px solid var(--line);background:var(--card)}
-.pass .main{padding:18px;display:grid;gap:10px;min-width:0}
-.pass .stub{background:var(--navy);color:var(--bg);padding:18px;display:grid;place-items:center;writing-mode:vertical-rl;font-family:var(--font-display);font-weight:900;letter-spacing:.2em;border-left:2px dashed var(--line)}
-.pass dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:0}
-.pass dt{font-size:.7rem;color:var(--muted);letter-spacing:.1em}
-.pass dd{margin:0;font-weight:700;overflow-wrap:anywhere}
-.notice{background:color-mix(in srgb,var(--sun) 18%,var(--card));border:1px solid var(--sun);border-radius:10px;padding:10px 14px;font-size:.9rem}
-@media (prefers-reduced-motion: reduce){*{transition:none!important}}
-</style>
+.hint{font-size:.82rem;color:var(--muted);text-align:center}
 
-<style>
-/* ===== Visual layer: boarding / departure theme, friendly rounded type, motion ===== */
-:root{ --font-head:"Dela Gothic One","Zen Maru Gothic","Noto Sans JP",sans-serif; --ink:#0b3561; --sky1:#0b3561; --sky2:#13809e; --glow:color-mix(in srgb,var(--sea) 30%,transparent);}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#e4eef2; --sky1:#071725; --sky2:#0f5b70}}
-:root[data-theme="dark"]{--ink:#e4eef2; --sky1:#071725; --sky2:#0f5b70}
-body{background:
-  radial-gradient(60vmax 40vmax at 110% -10%, color-mix(in srgb,var(--sea) 14%,transparent), transparent 60%),
-  radial-gradient(50vmax 40vmax at -20% 110%, color-mix(in srgb,var(--sun) 12%,transparent), transparent 60%),
-  var(--bg); background-attachment:fixed}
-h1,h2{font-family:var(--font-head);font-weight:400;letter-spacing:.02em}
-h2{font-size:1.55rem}
-/* buttons */
-.btn.ghost{color:var(--sea)!important}
-.btn{transition:transform .15s ease, box-shadow .2s ease, filter .2s; box-shadow:0 6px 16px -6px var(--glow)}
-.btn:not(:disabled):hover{transform:translateY(-2px); box-shadow:0 10px 22px -8px var(--glow)}
-.btn:not(:disabled):active{transform:scale(.96)}
-#next:not(:disabled){background:linear-gradient(100deg,var(--sea),color-mix(in srgb,var(--sea) 70%,var(--sun)));background-size:200% 100%;animation:shine 3s ease-in-out infinite}
-#next.unlocked{animation:pop .5s cubic-bezier(.3,1.6,.5,1), shine 3s ease-in-out infinite}
-@keyframes shine{0%,100%{background-position:0 0}50%{background-position:100% 0}}
-@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
-.chip,.opt{transition:transform .15s, background .2s, border-color .2s}
-.chip:active,.opt:active{transform:scale(.96)}
-.opt.right{animation:pop .4s}
-.opt.wrong{animation:shake .4s}
-@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-/* header plane */
-.track .plane{transition:left .8s cubic-bezier(.6,0,.2,1)}
-.track .done{transition:width .8s cubic-bezier(.6,0,.2,1)}
-/* step enter + stagger */
-section.step:not([hidden])>*{animation:rise .55s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--i,0) * 70ms)}
-@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
-/* step head */
-.stephead{display:flex;align-items:center;gap:14px}
-.stephead .num{font-family:var(--font-head);font-size:3.2rem;line-height:1;color:transparent;-webkit-text-stroke:2px var(--sea);flex:none}
-.stephead .eyebrow{margin:0 0 2px}
 /* welcome sky */
-.sky{position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(160deg,var(--sky1),var(--sky2));color:#fff;padding:28px 20px 26px;min-height:340px;display:grid;align-items:end;isolation:isolate}
-.sky::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 15%,rgba(255,255,255,.18),transparent 40%);z-index:-1}
+.sky{position:relative;overflow:hidden;border-radius:26px;background:linear-gradient(160deg,var(--brand-deep),var(--brand) 55%,var(--sub));color:#fff;padding:24px 20px;isolation:isolate}
+:root[data-theme="dark"] .sky{background:linear-gradient(160deg,#071a24,#0f5470 60%,#167f8a)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .sky{background:linear-gradient(160deg,#071a24,#0f5470 60%,#167f8a)}}
 .sky-route{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
 .sky-route path{stroke:rgba(255,255,255,.45);stroke-width:1.5;stroke-dasharray:6 7;animation:dash 20s linear infinite}
 @keyframes dash{to{stroke-dashoffset:-260}}
-.sky-plane{position:absolute;left:0;top:0;font-size:22px;color:#fff;offset-path:path("M-10 190 C 90 40, 300 40, 410 150");offset-rotate:auto;animation:fly 7s cubic-bezier(.45,0,.55,1) infinite;z-index:-1}
-@keyframes fly{0%{offset-distance:0%;opacity:0}8%{opacity:1}92%{opacity:1}100%{offset-distance:100%;opacity:0}}
-.tag{position:absolute;font:700 .62rem/1 var(--font-body);letter-spacing:.14em;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);padding:5px 8px;border-radius:999px;animation:bob 5s ease-in-out infinite;z-index:-1}
-.t1{left:6%;top:8%}.t2{right:6%;top:13%;animation-delay:-1s}.t3{right:16%;top:29%;animation-delay:-2s}.t4{left:38%;top:5%;animation-delay:-3s}.t5{left:10%;top:24%;animation-delay:-4s}
+.sky-plane{position:absolute;left:0;top:0;color:#fff;offset-rotate:auto;animation:fly 7s cubic-bezier(.45,0,.55,1) infinite;z-index:-1}
+.sky-plane svg{width:22px;height:22px;transform:rotate(45deg)}
+@keyframes fly{0%{offset-distance:0%;opacity:0}8%,92%{opacity:1}100%{offset-distance:100%;opacity:0}}
+.tag{position:absolute;font:700 .6rem/1 var(--font-body);letter-spacing:.14em;color:#fff;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);padding:5px 8px;border-radius:999px;animation:bob 5s ease-in-out infinite;z-index:-1}
+.t1{left:6%;top:8%}.t2{right:6%;top:13%;animation-delay:-1s}.t3{right:16%;top:27%;animation-delay:-2s}.t4{left:38%;top:5%;animation-delay:-3s}.t5{left:10%;top:23%;animation-delay:-4s}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-.sky-inner{display:grid;gap:10px;padding-top:140px}
-.sky-logo{width:72px;height:72px;animation:spin-in 1s cubic-bezier(.2,.8,.2,1) both}
-@keyframes spin-in{from{transform:rotate(-180deg) scale(.3);opacity:0}to{transform:none;opacity:1}}
-.sky h1{color:#fff;font-size:2rem;line-height:1.3}
-.kicker{font-weight:700;letter-spacing:.3em;font-size:.72rem;color:var(--sun)}
-.sky p{color:rgba(255,255,255,.88)}
+.sky-inner{display:grid;gap:10px;padding-top:120px}
+.sky h1{color:#fff}
+.kicker{font-family:var(--font-stamp);letter-spacing:.24em;font-size:.72rem;color:var(--peach)}
+.sky p{color:rgba(255,255,255,.9)}
 .sky-meta{display:flex;flex-wrap:wrap;gap:8px}
-.sky-meta span{background:rgba(255,255,255,.16);border-radius:999px;padding:3px 12px;font-size:.82rem;font-weight:700}
-/* cards hover lift */
-.card{transition:transform .25s, box-shadow .25s}
-.card:hover{box-shadow:0 14px 30px -18px var(--glow)}
-/* person flip (step 1) */
-.flip:not(.flip3d)[aria-expanded="true"] .person img{animation:wobble .5s}
-@keyframes wobble{30%{transform:rotate(-8deg) scale(1.05)}60%{transform:rotate(6deg)}}
-.person img{transition:transform .3s}
-/* member map: gentle zoom-on-tap hint */
-figure img{cursor:zoom-in;transition:transform .3s}
-figure img:hover{transform:scale(1.01)}
-/* 3D flip cards (step 3) */
-.flip3d{position:relative;display:grid;padding:0;border:0;background:none;perspective:1000px;min-height:170px}
-.flip3d::after{display:none}
-.flip3d .face{grid-area:1/1;display:grid;gap:8px;align-content:center;padding:20px;border-radius:16px;backface-visibility:hidden;transition:transform .7s cubic-bezier(.3,1.3,.5,1);border:1.5px solid var(--line)}
-.flip3d .front{background:linear-gradient(135deg,var(--card),var(--aqua))}
-.flip3d .backface{background:var(--navy);color:var(--bg);transform:rotateY(180deg)}
-.flip3d .backface .back{display:block!important;color:var(--bg);font-size:.95rem}
-.flip3d[aria-expanded="true"] .front{transform:rotateY(-180deg)}
-.flip3d[aria-expanded="true"] .backface{transform:rotateY(0)}
-.flip3d .tap{font-size:.8rem;color:var(--sea);font-weight:700}
-/* count-up number */
-.big{display:inline-block;animation:pop .6s}
-/* timeline draw */
+.sky-meta span{background:rgba(255,255,255,.18);border-radius:999px;padding:3px 12px;font-size:.82rem;font-weight:700}
+
+/* mentor match */
+.mentors{display:grid;gap:12px}
+.mentor{display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,var(--card),var(--peach));border:1.5px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:20px;padding:14px;animation:float-in .7s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(var(--k,0) * 160ms)}
+@keyframes float-in{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
+.mentor img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--card);box-shadow:0 0 0 3px var(--accent)}
+.mentor b{font-family:var(--font-head);font-size:1.1rem;color:var(--brand-deep)}
+.mentor .school{font-size:.82rem;color:var(--brand);font-weight:700;display:block}
+.mentor .why{font-size:.82rem;color:var(--muted)}
+.mention{display:inline-block;background:color-mix(in srgb,#5865f2 22%,transparent);color:#4752c4;border-radius:4px;padding:0 4px;font-weight:700}
+:root[data-theme="dark"] .mention{color:#c9cdfb}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .mention{color:#c9cdfb}}
+
+/* flip cards */
+.flip{position:relative;display:grid;padding:0;border:0;background:none;perspective:1000px;min-height:150px;text-align:left;width:100%}
+.flip .face{grid-area:1/1;display:grid;gap:8px;align-content:center;padding:18px;border-radius:20px;backface-visibility:hidden;-webkit-backface-visibility:hidden;transition:transform .7s cubic-bezier(.3,1.3,.5,1);border:1.5px solid var(--line)}
+.flip .front{background:linear-gradient(135deg,var(--card),var(--mist))}
+.flip .backface{background:var(--brand-deep);color:var(--bg);transform:rotateY(180deg)}
+.flip[aria-expanded="true"] .front{transform:rotateY(-180deg)}
+.flip[aria-expanded="true"] .backface{transform:rotateY(0)}
+.flip .part{font-family:var(--font-stamp);color:var(--accent);letter-spacing:.1em;font-size:.85rem}
+.flip .tap{font-size:.8rem;color:var(--brand);font-weight:700;display:flex;align-items:center;gap:4px}
+.flip .tap svg{width:14px;height:14px}
+.person{display:grid;grid-template-columns:84px 1fr;gap:14px;align-items:center}
+.person img{width:84px;height:84px;object-fit:cover;border-radius:50%;border:3px solid var(--mist)}
+.person .uni{font-size:.85rem;color:var(--brand);font-weight:700}
+
+/* guess */
+.reveal{display:grid;gap:6px;border-left:3px solid var(--accent);padding-left:12px}
+.big{font-family:var(--font-stamp);font-size:2rem;color:var(--accent);line-height:1.2;font-variant-numeric:tabular-nums}
+.timeline{list-style:none;margin:0;padding:0}
+.timeline li{display:grid;grid-template-columns:76px 1fr;gap:12px;padding:8px 0 8px 16px;border-left:2px solid var(--line);margin-left:6px;position:relative}
+.timeline li::before{content:"";position:absolute;left:-7px;top:16px;width:12px;height:12px;border-radius:50%;background:var(--sub)}
 section.step:not([hidden]) .timeline li{animation:rise .5s both;animation-delay:calc(300ms + var(--j,0) * 90ms)}
-/* hotspot pulse */
-.spot:not(.right):not(.wrong){animation:pulse 1.8s ease-in-out infinite}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--sun) 55%,transparent)}50%{box-shadow:0 0 0 8px transparent}}
-/* before/after crossfade */
-.compare figure:not([hidden]){animation:fadein .45s ease both}
+.timeline time{font-variant-numeric:tabular-nums;color:var(--brand);font-weight:700;font-size:.9rem}
+
+/* discord bits */
+.hot{position:relative}
+.hot img{display:block;width:100%;border-radius:12px}
+.spot{position:absolute;border:2px dashed var(--accent);background:transparent;border-radius:8px;animation:pulse 1.8s ease-in-out infinite}
+.spot.right{border-style:solid;border-color:var(--ok);background:color-mix(in srgb,var(--ok) 18%,transparent);animation:none}
+.spot.wrong{border-style:solid;border-color:var(--ng);animation:shake .4s}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--accent) 55%,transparent)}50%{box-shadow:0 0 0 8px transparent}}
+.seg{display:inline-grid;grid-auto-flow:column;background:var(--mist);border-radius:999px;padding:4px;gap:4px;justify-self:start}
+.seg button{border:0;background:transparent;color:var(--brand-deep);border-radius:999px;min-height:40px;padding:0 14px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 2px 6px -2px var(--glow)}
+.compare figure{display:grid;gap:8px;justify-items:start;animation:fadein .45s ease both}
 @keyframes fadein{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
-/* rules as tappable cards with stamp */
-.rule{border:1.5px solid var(--line);border-radius:14px;padding:12px;transition:border-color .2s, background .2s;position:relative}
+.shots{display:grid;gap:8px;width:100%}
+.shots img{display:block;border-radius:10px;border:1px solid var(--line);cursor:zoom-in}
+.shots img:first-child{width:70%}
+.sortq{display:grid;gap:8px;padding-block:12px;border-top:1px solid var(--line)}
+.sortq:first-of-type{border-top:0}
+.sortq .opts{display:flex;gap:8px}
+.sortq .opt{flex:1 1 0;min-width:0;text-align:center;padding:10px 4px;white-space:nowrap;font-size:.9rem}
+details.card summary{cursor:pointer;font-weight:700;color:var(--brand-deep);list-style:none;display:flex;gap:10px;align-items:center;min-height:32px}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary .ic{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:var(--mist);flex:none}
+details.card summary .ic svg{width:18px;height:18px;color:var(--brand)}
+
+/* chat simulator */
+.chat{background:var(--discord);color:var(--discord-fg);border-radius:20px;overflow:hidden;display:grid}
+.chat-top{display:flex;align-items:center;gap:8px;padding:10px 14px;background:var(--discord-2);font-weight:700;color:#f2f3f5;font-size:.95rem}
+.chat-top svg{width:18px;height:18px;color:#80848e}
+.chat-log{display:grid;gap:12px;padding:14px;min-height:220px;align-content:end}
+.msg{display:grid;grid-template-columns:38px 1fr;gap:10px;animation:msgin .35s cubic-bezier(.2,1.2,.4,1) both}
+@keyframes msgin{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.msg .av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:900;color:#fff;overflow:hidden}
+.msg .av img{width:100%;height:100%;object-fit:cover}
+.msg .who{font-weight:700;color:#f2f3f5;font-size:.9rem}
+.msg .who .bot{font-size:.6rem;background:#5865f2;color:#fff;border-radius:4px;padding:1px 4px;margin-left:4px;vertical-align:2px}
+.msg .who time{font-weight:400;font-size:.7rem;color:#949ba4;margin-left:6px}
+.msg .txt{font-size:.92rem;overflow-wrap:anywhere}
+.reacts{display:flex;gap:6px;margin-top:6px}
+.react{display:inline-flex;gap:4px;align-items:center;background:color-mix(in srgb,#5865f2 25%,#2b2d31);border:1px solid #5865f2;border-radius:8px;padding:1px 8px;font-size:.85rem;animation:reactin .5s cubic-bezier(.3,1.8,.5,1) both}
+@keyframes reactin{from{transform:scale(0)}to{transform:scale(1)}}
+.typing{display:flex;gap:4px;padding:8px 0}
+.typing i{width:7px;height:7px;border-radius:50%;background:#949ba4;animation:dot 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes dot{0%,60%,100%{transform:translateY(0);opacity:.5}30%{transform:translateY(-4px);opacity:1}}
+.chat-compose{background:var(--discord-2);padding:12px 14px;display:grid;gap:10px}
+.draft{background:#383a40;border-radius:10px;padding:10px 12px;font-size:.92rem;color:#dbdee1}
+.chat-choices{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chat-choices button{min-height:52px;border-radius:12px;border:1.5px solid #4e5058;background:#383a40;color:#f2f3f5;font-weight:700;display:flex;align-items:center;justify-content:center;gap:6px;transition:transform .15s}
+.chat-choices button:active{transform:scale(.95)}
+.chat-choices button svg{width:16px;height:16px}
+.flyer{position:fixed;z-index:60;font-size:28px;pointer-events:none;animation:flyup 1.2s ease-out forwards}
+@keyframes flyup{to{transform:translate(var(--dx),-140px) scale(1.4) rotate(var(--rot));opacity:0}}
+
+/* rules */
+.rule{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;cursor:pointer;border:1.5px solid var(--line);border-radius:16px;padding:12px;transition:border-color .2s,background .2s}
 .rule:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--card))}
-.rule input{appearance:none;-webkit-appearance:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;transition:all .2s;margin-top:2px;background:var(--card)}
+.rule input{appearance:none;-webkit-appearance:none;width:28px;height:28px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;margin:2px 0 0;background:var(--card)}
 .rule input:checked{background:var(--ok);border-color:var(--ok)}
-.rule input:checked::after{content:"✓";color:var(--card);font-weight:900;font-size:15px;animation:pop .35s}
-/* discord-like preview */
-.dmsg{display:grid;grid-template-columns:42px 1fr;gap:12px;background:#313338;color:#dbdee1;border-radius:12px;padding:14px;min-width:0}
-.dmsg .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--sea),var(--sun));color:#fff;font-weight:900;font-size:1.1rem;transition:transform .3s}
+.rule input:checked::after{content:"✓";color:#fff;font-weight:900;font-size:15px;animation:pop .35s}
+.rule b{display:block;color:var(--brand-deep)}
+.rule span span{color:var(--muted);font-size:.93rem}
+
+/* discord preview of intro */
+.dmsg{display:grid;grid-template-columns:42px 1fr;gap:12px;background:var(--discord);color:var(--discord-fg);border-radius:14px;padding:14px;min-width:0}
+.dmsg .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--brand),var(--accent));color:#fff;font-weight:900}
 .dmsg .dbody{min-width:0}
-.dmsg .dhead{display:flex;gap:8px;align-items:baseline}
-.dmsg .dhead b{color:#f2f3f5}
-.dmsg time{font-size:.72rem;color:#949ba4}
-.dmsg .out{background:none;border:0;padding:4px 0 0;color:#dbdee1;font-size:.92rem}
-.dmsg.typing .out::after{content:"▍";animation:blink 1s steps(1) infinite;color:var(--sun)}
+.dmsg b{color:#f2f3f5}
+.dmsg time{font-size:.72rem;color:#949ba4;margin-left:6px}
+.dmsg .out{white-space:pre-wrap;font-size:.92rem;overflow-wrap:anywhere;margin-top:2px}
+.dmsg.typing .out::after{content:"▍";animation:blink 1s steps(1) infinite;color:var(--accent)}
 @keyframes blink{50%{opacity:0}}
-/* toast */
-.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--navy);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.3,1.4,.5,1);z-index:30;max-width:calc(100% - 32px);text-align:center}
+
+/* passport */
+.passport{position:relative;border-radius:24px;overflow:hidden;background:linear-gradient(150deg,var(--brand-deep),var(--brand) 55%,var(--sub));color:#fff;padding:20px;display:grid;gap:14px;box-shadow:0 30px 50px -30px var(--glow)}
+:root[data-theme="dark"] .passport{background:linear-gradient(150deg,#071a24,#0f5470 60%,#167f8a)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .passport{background:linear-gradient(150deg,#071a24,#0f5470 60%,#167f8a)}}
+section.step:not([hidden]) .passport{animation:printin 1s cubic-bezier(.2,.9,.2,1) both .15s}
+@keyframes printin{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+.passport .pp-head{display:flex;align-items:center;gap:10px}
+.passport .pp-head img{width:44px;height:44px}
+.passport .pp-title{font-family:var(--font-stamp);letter-spacing:.12em;font-size:.9rem}
+.passport dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;margin:0}
+.passport dt{font-size:.62rem;letter-spacing:.14em;opacity:.8}
+.passport dd{margin:0;font-weight:700;overflow-wrap:anywhere}
+.passport .stamps .stamp-slot{border-color:rgba(255,255,255,.5);color:#fff;width:40px;height:40px;font-size:.62rem}
+.passport .stamps .stamp-slot.on{border-color:var(--peach);color:var(--peach);background:rgba(255,145,77,.25)}
+.approved{position:absolute;right:16px;top:18px;font-family:var(--font-stamp);color:var(--peach);border:3px solid var(--peach);border-radius:10px;padding:2px 10px;transform:rotate(-14deg);opacity:0}
+section.step:not([hidden]) .approved{animation:stampbig .5s cubic-bezier(.3,1.8,.5,1) both 1.2s}
+@keyframes stampbig{from{opacity:0;transform:rotate(-14deg) scale(2.6)}to{opacity:.95;transform:rotate(-14deg) scale(1)}}
+.next-steps{display:grid;gap:12px;margin:0;padding:0;list-style:none}
+.next-steps li{display:grid;grid-template-columns:32px 1fr;gap:10px}
+.next-steps .n{display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font-weight:700}
+
+/* action bar, toast, lightbox */
+.actionbar{position:fixed;left:0;right:0;bottom:0;z-index:8;background:color-mix(in srgb,var(--card) 94%,transparent);backdrop-filter:blur(10px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.actionbar .wrap{display:flex;justify-content:space-between;align-items:center;gap:10px;padding-block:10px}
+.actionbar .hint{flex:1}
+#next{flex:0 0 auto;min-width:132px}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--brand-deep);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.3,1.4,.5,1);z-index:30;max-width:calc(100% - 32px);text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-/* lightbox */
 .lightbox{position:fixed;inset:0;z-index:40;background:rgba(5,15,25,.88);display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));animation:fadein .25s}
-.lightbox img{max-width:100%;max-height:85vh;border-radius:12px;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:85vh;border-radius:12px}
 .lb-close{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.15);color:#fff;font-size:1.6rem}
-/* boarding pass + stamp */
-.pass{position:relative;box-shadow:0 20px 40px -24px var(--glow)}
-section.step:not([hidden]) .pass{animation:print 1s cubic-bezier(.2,.9,.2,1) both .2s}
-@keyframes print{from{clip-path:inset(0 0 100% 0);transform:translateY(-10px)}to{clip-path:inset(0 0 0 0);transform:none}}
-.stamp{position:absolute;right:70px;bottom:14px;font-family:var(--font-head);font-size:1.1rem;color:var(--ng);border:3px solid var(--ng);border-radius:8px;padding:2px 10px;transform:rotate(-12deg);opacity:0}
-section.step:not([hidden]) .stamp{animation:stamp .5s cubic-bezier(.3,1.8,.5,1) both 1.2s}
-@keyframes stamp{from{opacity:0;transform:rotate(-12deg) scale(2.4)}to{opacity:.85;transform:rotate(-12deg) scale(1)}}
+.notice{background:var(--peach);border:1px solid var(--accent);border-radius:12px;padding:10px 14px;font-size:.9rem}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
-  .stamp{opacity:.85}
+  .approved{opacity:.95}
   .sky-plane{display:none}
 }
 </style>
 </head>
 <body>
 
-<header>
+<header class="top">
   <div class="wrap">
     <img src="img/logo.png" alt="みんなの留学部">
     <div class="route" aria-live="polite">
       <div class="route-label"><span id="stepName">ようこそ</span><span id="stepCount">0 / 6</span></div>
-      <div class="track" aria-hidden="true"><div class="done" id="trackDone"></div><span class="plane" id="plane">✈</span></div>
+      <div class="track" aria-hidden="true"><div class="done" id="trackDone"></div><span class="plane" id="plane"><i data-lucide="plane"></i></span></div>
     </div>
+    <button class="iconbtn" id="mute" type="button" aria-pressed="false" aria-label="効果音をオフにする"><i data-lucide="volume-2"></i></button>
   </div>
 </header>
+
+<!-- live boarding pass -->
+<div class="passbar wrap" id="passbar">
+  <div class="ticket" id="ticket">
+    <div class="t-main">
+      <div class="t-row">
+        <span class="t-brand">BOARDING PASS</span>
+        <button class="t-toggle" id="ticketToggle" type="button" aria-expanded="false">詳しく<i data-lucide="chevron-down"></i></button>
+      </div>
+      <dl class="t-fields">
+        <div class="t-f"><dt>PASSENGER</dt><dd id="tkName">— — —</dd></div>
+        <div class="t-f"><dt>DESTINATION</dt><dd id="tkDest">— — —</dd></div>
+        <div class="t-f t-more"><dt>CLASS</dt><dd id="tkType">— — —</dd></div>
+        <div class="t-f t-more"><dt>FIELD</dt><dd id="tkField">— — —</dd></div>
+        <div class="t-f t-more" style="grid-column:1/-1"><dt>STAMPS</dt><dd><div class="stamps" id="tkStamps"></div></dd></div>
+      </dl>
+    </div>
+    <div class="t-stub"><div><small>GATE</small><b id="tkGate">00</b><small id="tkCount">0/6</small></div></div>
+  </div>
+</div>
 
 <main class="wrap">
 
 <!-- 0 -->
 <section class="step" data-name="ようこそ">
   <div class="sky">
-    <svg class="sky-route" viewBox="0 0 400 220" aria-hidden="true" preserveAspectRatio="none">
-      <path id="route" d="M-10 80 C 100 5, 280 5, 410 66" fill="none"/>
-    </svg>
-    <span class="sky-plane" aria-hidden="true">✈</span>
-    <span class="tag t1" aria-hidden="true">NEW YORK</span>
-    <span class="tag t2" aria-hidden="true">LONDON</span>
-    <span class="tag t3" aria-hidden="true">SYDNEY</span>
-    <span class="tag t4" aria-hidden="true">TORONTO</span>
-    <span class="tag t5" aria-hidden="true">SINGAPORE</span>
+    <svg class="sky-route" viewBox="0 0 400 220" aria-hidden="true" preserveAspectRatio="none"><path d="M-10 80 C 100 5, 280 5, 410 66" fill="none"/></svg>
+    <span class="sky-plane" aria-hidden="true"><i data-lucide="plane"></i></span>
+    <span class="tag t1" aria-hidden="true">NEW YORK</span><span class="tag t2" aria-hidden="true">LONDON</span><span class="tag t3" aria-hidden="true">SYDNEY</span><span class="tag t4" aria-hidden="true">TORONTO</span><span class="tag t5" aria-hidden="true">SINGAPORE</span>
     <div class="sky-inner">
       <p class="kicker">WELCOME ABOARD</p>
       <h1>みんなの留学部へ<br>ようこそ</h1>
-      <p>ミーティングに参加しなくても、自分のペースでオリエンテーションを受けられます。</p>
-      <div class="sky-meta"><span>約15分</span><span>全6ステップ</span><span>スマホOK</span></div>
+      <p>ミーティングに参加しなくても、自分のペースでオリエンテーションを受けられます。答えるたびに上の搭乗券にスタンプがたまります。</p>
+      <div class="sky-meta"><span>約15分</span><span>全6ゲート</span><span>スマホOK</span></div>
     </div>
   </div>
-  <div class="card" style="display:grid;gap:12px">
-    <h3>はじめに</h3>
-    <p>最後の確認クイズに全問正解すると、Discord IDを運営に送れます。運営が確認して権限を付けると、留学部の全チャンネルが見られて、質問や投稿ができるようになります。</p>
-    <label class="field" for="nick">ニックネーム <small>このページの中で呼びかけに使うだけです</small>
+  <div class="card">
+    <h3>搭乗券をつくろう</h3>
+    <label class="field" for="nick">ニックネーム <small>搭乗券とこのページの中で使うだけです</small>
       <input type="text" id="nick" maxlength="20" placeholder="例: はると" autocomplete="nickname">
     </label>
-    <div class="field" style="display:grid;gap:8px">
-      <span>行ってみたい地域は？ <small style="font-weight:400;color:var(--muted)">いくつでも。最後におすすめのチャンネルを案内します</small></span>
-      <div class="choices" id="regions">
-        <button type="button" class="chip" aria-pressed="false">アメリカ</button>
-        <button type="button" class="chip" aria-pressed="false">カナダ</button>
-        <button type="button" class="chip" aria-pressed="false">イギリス</button>
-        <button type="button" class="chip" aria-pressed="false">ヨーロッパ</button>
-        <button type="button" class="chip" aria-pressed="false">オーストラリア</button>
-        <button type="button" class="chip" aria-pressed="false">アジア</button>
-        <button type="button" class="chip" aria-pressed="false">まだ決めていない</button>
-      </div>
-    </div>
+    <div class="field"><span>行ってみたい地域は？ <small>いくつでも</small></span>
+      <div class="choices" id="regions"></div></div>
+    <div class="field"><span>どんな留学に興味がある？</span>
+      <div class="choices" id="types"></div></div>
+    <div class="field"><span>興味のある分野は？</span>
+      <div class="choices" id="fields"></div></div>
+  </div>
+  <div class="card" id="matchCard" hidden>
+    <p class="eyebrow">MENTOR MATCH</p>
+    <h3>あなたに近い先輩メンター</h3>
+    <div class="mentors" id="matches"></div>
+    <p class="lead" id="matchNote"></p>
   </div>
 </section>
 
 <!-- 1 -->
 <section class="step" data-name="メンバー紹介" hidden>
   <div class="stephead"><span class="num" aria-hidden="true">01</span><div><p class="eyebrow">GATE 01</p><h2>運営メンバーを紹介します</h2></div></div>
-  <p class="lead">留学部は、海外の大学で学ぶ現役の留学生たちが運営しています。全体統括の2人をタップしてみてください。</p>
-  <div class="grid2">
-    <button class="flip" aria-expanded="false">
-      <span class="person"><img src="img/kanon.jpg" alt=""><span><h3>Kanon</h3><span class="uni">Middlebury College（アメリカ）</span></span></span>
-      <span class="back">仙台で生まれ育ち、仙台のIB校からMiddlebury Collegeに進学。笹川平和財団奨学金の一期生。</span>
+  <p class="lead">留学部は、海外の大学で学ぶ現役の留学生たちが運営しています。全体統括の2人のカードをめくってみてください。</p>
+  <div class="grid2" id="leaders">
+    <button class="flip" type="button" aria-expanded="false">
+      <span class="face front"><span class="person"><img src="img/kanon.jpg" alt=""><span><h3>Kanon</h3><span class="uni">Middlebury College（アメリカ）</span></span></span><span class="tap"><i data-lucide="rotate-cw"></i>タップしてめくる</span></span>
+      <span class="face backface"><span class="part">KANON</span><span>仙台で生まれ育ち、仙台のIB校からMiddlebury Collegeに進学。笹川平和財団奨学金の一期生。</span></span>
     </button>
-    <button class="flip" aria-expanded="false">
-      <span class="person"><img src="img/kota.jpg" alt=""><span><h3>Kota</h3><span class="uni">University of Sydney（オーストラリア）</span></span></span>
-      <span class="back">横浜で高校卒業までを過ごし、高校2年で留学を決意。ファンデーションコースを経てThe University of Sydneyに進学。</span>
+    <button class="flip" type="button" aria-expanded="false">
+      <span class="face front"><span class="person"><img src="img/kota.jpg" alt=""><span><h3>Kota</h3><span class="uni">University of Sydney（オーストラリア）</span></span></span><span class="tap"><i data-lucide="rotate-cw"></i>タップしてめくる</span></span>
+      <span class="face backface"><span class="part">KOTA</span><span>横浜で高校卒業までを過ごし、高校2年で留学を決意。ファンデーションコースを経てThe University of Sydneyに進学。</span></span>
     </button>
   </div>
   <figure>
     <img src="img/members.jpg" alt="世界地図の周りに並ぶ19人のメンターの写真">
-    <figcaption>世界各地の大学に通う19人のメンターが、Discordで質問に答えています。</figcaption>
+    <figcaption>世界各地の大学に通う19人のメンターが、Discordで質問に答えています。タップで拡大できます。</figcaption>
   </figure>
 </section>
 
 <!-- 2 -->
 <section class="step" data-name="留学部とは" hidden>
   <div class="stephead"><span class="num" aria-hidden="true">02</span><div><p class="eyebrow">GATE 02</p><h2>みんなの留学部とは</h2></div></div>
-  <div class="card" style="background:var(--aqua);border-color:transparent">
-    <p style="font-family:var(--font-display);font-weight:700;color:var(--navy);font-size:1.1rem">挑戦を後押しする情報と機会を届け、等身大の想いに寄り添い、ロールモデルを示す伴走者である。</p>
+  <div class="card" style="background:var(--mist);border-color:transparent">
+    <p style="font-family:var(--font-head);font-weight:900;color:var(--brand-deep);font-size:1.1rem">挑戦を後押しする情報と機会を届け、等身大の想いに寄り添い、ロールモデルを示す伴走者である。</p>
   </div>
-  <div>
+  <div class="card">
     <h3>3つの理念 <small style="font-weight:400;color:var(--muted)">一番共感するものを選んでみてください</small></h3>
-    <div class="choices" id="principles" style="margin-top:10px">
-      <button class="chip" aria-pressed="false" data-msg="留学部では、動画・記事・イベントで、調べても出てこない情報を届けています。">可能性を拓く情報と機会の提供</button>
-      <button class="chip" aria-pressed="false" data-msg="不安や迷いも、そのまま話して大丈夫です。メンターも同じ道を通ってきました。">等身大の想いに寄り添う</button>
-      <button class="chip" aria-pressed="false" data-msg="19人のメンターそれぞれの留学パスが、あなたの道の参考になります。">ロールモデルの可視化</button>
+    <div class="choices" id="principles">
+      <button type="button" class="chip" aria-pressed="false" data-msg="留学部では、動画・記事・イベントで、調べても出てこない情報を届けています。">可能性を拓く情報と機会の提供</button>
+      <button type="button" class="chip" aria-pressed="false" data-msg="不安や迷いも、そのまま話して大丈夫です。メンターも同じ道を通ってきました。">等身大の想いに寄り添う</button>
+      <button type="button" class="chip" aria-pressed="false" data-msg="19人のメンターそれぞれの留学パスが、あなたの道の参考になります。">ロールモデルの可視化</button>
     </div>
-    <p class="feedback ok" id="principleMsg" style="margin-top:8px;font-weight:500"></p>
-  </div>
-  <div>
-    <h3>活動の2つの柱 <small style="font-weight:400;color:var(--muted)">数字を当ててみてください</small></h3>
+    <p class="feedback ok" id="principleMsg" style="font-weight:500"></p>
   </div>
   <div class="grid2">
-    <div class="card guess" data-k="yt" data-a="1" style="display:grid;gap:10px">
+    <div class="card guess" data-k="yt" data-a="1">
       <p class="eyebrow">メディア運営</p>
       <h3>留学部のYouTubeチャンネル、登録者は何人？</h3>
-      <div class="opts" style="display:grid;gap:8px"><button type="button" class="opt">約2,500人</button><button type="button" class="opt">約2.5万人</button><button type="button" class="opt">約25万人</button></div>
-      <div class="reveal" hidden><span class="big">2.5万人</span><p>総再生回数は約200万回、Webメディアの総PV数は20万回超。海外大生のリアルな情報を発信して、支援の輪を広げています。</p></div>
+      <div style="display:grid;gap:8px"><button type="button" class="opt">約2,500人</button><button type="button" class="opt">約2.5万人</button><button type="button" class="opt">約25万人</button></div>
+      <div class="reveal" hidden><span class="big">2.5万人</span><p>総再生回数は約200万回、Webメディアの総PV数は20万回超。海外大生のリアルな情報を発信しています。</p></div>
     </div>
-    <div class="card guess" data-k="ev" data-a="2" style="display:grid;gap:10px">
+    <div class="card guess" data-k="ev" data-a="2">
       <p class="eyebrow">コミュニティ運営</p>
       <h3>2025年夏の海外大生コミュニティのイベント、参加者は延べ何人？</h3>
-      <div class="opts" style="display:grid;gap:8px"><button type="button" class="opt">約50人</button><button type="button" class="opt">約150人</button><button type="button" class="opt">約500人</button></div>
-      <div class="reveal" hidden><span class="big">500人</span><p>進学を目指す人の支援と、現役留学生の挑戦の幅を広げる2つのコミュニティを運営しています。留学生と起業家が出会う場も作っています。</p></div>
+      <div style="display:grid;gap:8px"><button type="button" class="opt">約50人</button><button type="button" class="opt">約150人</button><button type="button" class="opt">約500人</button></div>
+      <div class="reveal" hidden><span class="big">500人</span><p>進学を目指す人の支援と、現役留学生の挑戦の幅を広げる2つのコミュニティを運営。留学生と起業家が出会う場も作っています。</p></div>
     </div>
   </div>
   <div class="card">
     <h3>これまでの活動</h3>
-    <ol class="timeline" style="margin-top:10px">
+    <ol class="timeline">
       <li><time>2025.06</time><span>一般社団法人 みんなの留学部 設立</span></li>
       <li><time>2026.03</time><span>TOKYO INNOVATION BASE ブース出展</span></li>
       <li><time>2026.04</time><span>SushiTech TOKYO ブース出展</span></li>
@@ -389,55 +445,70 @@ section.step:not([hidden]) .stamp{animation:stamp .5s cubic-bezier(.3,1.8,.5,1) 
 <!-- 3 -->
 <section class="step" data-name="できること" hidden>
   <div class="stephead"><span class="num" aria-hidden="true">03</span><div><p class="eyebrow">GATE 03</p><h2>コミュニティで何ができるの？</h2></div></div>
-  <p class="lead">留学部が目指すのは「留学生による、留学生のための」データプラットフォームです。3枚のカードをめくってみてください。</p>
-  <div style="display:grid;gap:12px">
-    <button class="flip flip3d" aria-expanded="false"><span class="face front"><span class="part">PART 01</span><h3>現役海外大生とのオンラインネットワーク</h3><span class="tap">タップしてめくる ↻</span></span><span class="face backface"><span class="part">PART 01</span><span class="back">調べても出てこない細かな悩みや疑問に、同じ道を歩む現役海外大生がオンラインで直接答えます。情報の一方通行をなくし、対話から生まれるリアルな学びを届けます。</span></span></button>
-    <button class="flip flip3d" aria-expanded="false"><span class="face front"><span class="part">PART 02</span><h3>留学情報の一本化・可視化</h3><span class="tap">タップしてめくる ↻</span></span><span class="face backface"><span class="part">PART 02</span><span class="back">留学を考えるときの判断材料、特に在学生の実体験に基づく声を一か所に集めます。海外大にまつわる情報がすべて見えるプラットフォームを作っています。</span></span></button>
-    <button class="flip flip3d" aria-expanded="false"><span class="face front"><span class="part">PART 03</span><h3>「繋ぐ」機会の提供</h3><span class="tap">タップしてめくる ↻</span></span><span class="face backface"><span class="part">PART 03</span><span class="back">イベントや学生サポートを通じて、学生と企業・教育機関、そして学生同士がつながる架け橋になります。</span></span></button>
+  <p class="lead">留学部が目指すのは「留学生による、留学生のための」データプラットフォーム。3枚のカードをめくってみてください。</p>
+  <div style="display:grid;gap:12px" id="parts">
+    <button class="flip" type="button" aria-expanded="false"><span class="face front"><span class="part">PART 01</span><h3>現役海外大生とのオンラインネットワーク</h3><span class="tap"><i data-lucide="rotate-cw"></i>タップしてめくる</span></span><span class="face backface"><span class="part">PART 01</span><span>調べても出てこない細かな悩みや疑問に、同じ道を歩む現役海外大生がオンラインで直接答えます。対話から生まれるリアルな学びを届けます。</span></span></button>
+    <button class="flip" type="button" aria-expanded="false"><span class="face front"><span class="part">PART 02</span><h3>留学情報の一本化・可視化</h3><span class="tap"><i data-lucide="rotate-cw"></i>タップしてめくる</span></span><span class="face backface"><span class="part">PART 02</span><span>在学生の実体験に基づく声を一か所に集め、海外大にまつわる情報がすべて見えるプラットフォームを作っています。</span></span></button>
+    <button class="flip" type="button" aria-expanded="false"><span class="face front"><span class="part">PART 03</span><h3>「繋ぐ」機会の提供</h3><span class="tap"><i data-lucide="rotate-cw"></i>タップしてめくる</span></span><span class="face backface"><span class="part">PART 03</span><span>イベントや学生サポートを通じて、学生と企業・教育機関、学生同士がつながる架け橋になります。</span></span></button>
   </div>
-  <p class="hint" id="flipHint">あと3枚</p>
 </section>
 
 <!-- 4 -->
 <section class="step" data-name="Discordの使い方" hidden>
   <div class="stephead"><span class="num" aria-hidden="true">04</span><div><p class="eyebrow">GATE 04</p><h2>Discordの使い方</h2></div></div>
   <p>Discordは、個人やグループでテキスト・音声・ビデオ通話ができるアプリです。留学部の活動はここが中心です。</p>
-  <div class="card" style="display:grid;gap:12px">
+  <div class="card">
     <h3>プロフィールの見方</h3>
     <p>プロフィールには「サーバーで表示される名前」と「Discord ID」があります。Discord IDはInstagramのユーザーIDのようなもので、人によって重ならない英数字です。<b>下の画像で、Discord IDの部分をタップしてください。</b></p>
-    <div class="hot" id="hot">
+    <div class="hot">
       <img src="img/profile.jpg" alt="Discordのプロフィール画面の例。アイコン、表示名 sara、その下に iz.sara.one_98902 と表示されている">
-      <button class="spot" data-k="status" aria-label="アイコン右下の緑の丸" style="left:23%;top:52%;width:9%;height:13%"></button>
-      <button class="spot" data-k="name" aria-label="太字の名前 sara" style="left:3%;top:75%;width:16%;height:10%"></button>
-      <button class="spot" data-k="id" aria-label="名前の下の英数字 iz.sara.one_98902" style="left:3%;top:87%;width:40%;height:10%"></button>
+      <button class="spot" type="button" data-k="status" aria-label="アイコン右下の緑の丸" style="left:23%;top:52%;width:9%;height:13%"></button>
+      <button class="spot" type="button" data-k="name" aria-label="太字の名前 sara" style="left:3%;top:75%;width:16%;height:10%"></button>
+      <button class="spot" type="button" data-k="id" aria-label="名前の下の英数字 iz.sara.one_98902" style="left:3%;top:87%;width:40%;height:10%"></button>
     </div>
     <p class="feedback" id="hotMsg" aria-live="polite"></p>
   </div>
-  <div class="card" style="display:grid;gap:12px">
+  <div class="card">
     <h3>オリエンテーションが終わると、見えるチャンネルが増えます</h3>
     <div class="seg" role="group" aria-label="表示を切り替え"><button type="button" data-v="before" aria-pressed="true">今</button><button type="button" data-v="after" aria-pressed="false">オリエンテーション後</button></div>
     <div class="compare">
-      <figure data-v="before"><span class="pill">今（オリエンテーション前）</span><div class="shots"><img src="img/campus-before-list.jpg" alt="ようこそカテゴリの一般、オリエンテーション日程、運営からのお知らせ、イベント告知、メディア更新のお知らせ、質問・お問い合わせチャンネル、ようこそ"><img src="img/campus-before-post.jpg" alt="運営からの10月のイベント告知の投稿"></div></figure>
-      <figure data-v="after" hidden><span class="pill">オリエンテーション後</span><div class="shots"><img src="img/campus-after-list.jpg" alt="交流しようカテゴリのおしゃべり、運営より、海外大生の日常、ローカルニュース、通話募集、スモールイベント、大学生グループ、雑談、作業ルームと、学習相談カテゴリの地域別相談室、英語学習、奨学金"><img src="img/campus-after-post.jpg" alt="カナダのアルバイト事情の質問に、現地の留学生が返信しているやりとり"></div></figure>
+      <figure data-v="before"><div class="shots"><img src="img/campus-before-list.jpg" alt="ようこそカテゴリの一般、オリエンテーション日程、運営からのお知らせ、イベント告知、メディア更新のお知らせ、質問・お問い合わせチャンネル、ようこそ"><img src="img/campus-before-post.jpg" alt="運営からの10月のイベント告知の投稿"></div></figure>
+      <figure data-v="after" hidden><div class="shots"><img src="img/campus-after-list.jpg" alt="交流しようカテゴリのおしゃべり、運営より、海外大生の日常、ローカルニュース、通話募集、スモールイベント、大学生グループ、雑談、作業ルームと、学習相談カテゴリの地域別相談室、英語学習、奨学金"><img src="img/campus-after-post.jpg" alt="カナダのアルバイト事情の質問に、現地の留学生が返信しているやりとり"></div></figure>
     </div>
     <p class="lead" id="campusMsg">「オリエンテーション後」を押して、見えるチャンネルの違いを比べてみてください。</p>
   </div>
   <div style="display:grid;gap:10px">
     <h3>3種類のチャンネル</h3>
-    <div class="card" id="sort">
-      <p><b>こんなとき、どのチャンネルを使う？</b> 下の説明を開いて確かめながら選んでみてください。</p>
-    </div>
-    <details class="card"><summary><span class="ic">#</span>テキストチャンネル</summary><p>メッセージでやりとりする場所です。お知らせやおしゃべり、自己紹介などに使います。@でメンションすると相手に通知が届きます。</p></details>
-    <details class="card"><summary><span class="ic">💬</span>フォーラムチャンネル</summary><p>テーマごとにスレッドを立てて質問・相談する場所です。たとえば「地域別相談室」には、アメリカ・アジア・ヨーロッパ・オーストラリアなど地域別のスレッドがあります。</p><p>「#奨学金」のように、テーマ別のテキストチャンネルで質問することもできます。</p></details>
-    <details class="card"><summary><span class="ic">🔊</span>ボイスチャンネル</summary><p>入るだけでリアルタイムに音声通話や画面共有ができます。「雑談」や「作業ルーム」があります。</p></details>
+    <div class="card" id="sort"><p><b>こんなとき、どのチャンネルを使う？</b> 下の説明を開いて確かめながら選んでみてください。</p></div>
+    <details class="card"><summary><span class="ic"><i data-lucide="hash"></i></span>テキストチャンネル</summary><p>メッセージでやりとりする場所です。お知らせやおしゃべり、自己紹介などに使います。@でメンションすると相手に通知が届きます。</p></details>
+    <details class="card"><summary><span class="ic"><i data-lucide="messages-square"></i></span>フォーラムチャンネル</summary><p>テーマごとにスレッドを立てて質問・相談する場所です。「地域別相談室」には、アメリカ・アジア・ヨーロッパ・オーストラリアなど地域別のスレッドがあります。「#奨学金」のように、テーマ別のテキストチャンネルで質問することもできます。</p></details>
+    <details class="card"><summary><span class="ic"><i data-lucide="volume-2"></i></span>ボイスチャンネル</summary><p>入るだけでリアルタイムに音声通話や画面共有ができます。「雑談」や「作業ルーム」があります。</p></details>
   </div>
 </section>
 
 <!-- 5 -->
 <section class="step" data-name="ルールとはじめの一歩" hidden>
   <div class="stephead"><span class="num" aria-hidden="true">05</span><div><p class="eyebrow">GATE 05</p><h2>ルールとはじめの一歩</h2></div></div>
-  <p class="lead">みんなの悩みや質問をスピーディーに解決し、よりよいコミュニティにするための5つのルールです。読んだらチェックを入れてください。</p>
-  <div class="card" style="display:grid;gap:14px" id="rules">
+
+  <div class="card">
+    <p class="eyebrow">やってみよう</p>
+    <h3>この質問、どこに送る？</h3>
+    <p class="lead">Discordの画面で、実際に質問を送ってみましょう。</p>
+    <div class="chat" id="chat">
+      <div class="chat-top"><i data-lucide="hash"></i><span id="chatChannel">メッセージを選んでね</span></div>
+      <div class="chat-log" id="chatLog" aria-live="polite"></div>
+      <div class="chat-compose" id="chatCompose">
+        <div class="draft" id="chatDraft">オーストラリアの大学の寮って、どんな雰囲気ですか？</div>
+        <div class="chat-choices">
+          <button type="button" data-to="dm"><i data-lucide="mail"></i>メンターにDM</button>
+          <button type="button" data-to="forum"><i data-lucide="messages-square"></i>#地域別相談室</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="rules">
+    <h3>5つのルール <small style="font-weight:400;color:var(--muted)">読んだらタップ</small></h3>
     <label class="rule"><input type="checkbox" id="r1"><span><b>留学に関する質問は、みんなが見えるチャンネルで</b><span>「一人の質問はみんなの質問」。#地域別相談室 や #奨学金 などで質問すると、ほかの部員も情報を得られて助け合えます。</span></span></label>
     <label class="rule"><input type="checkbox" id="r2"><span><b>最低限のリスペクトを</b><span>発言するときは、メンターやほかの部員へのリスペクトを忘れずに。</span></span></label>
     <label class="rule"><input type="checkbox" id="r3"><span><b>部員同士でも情報交換しよう</b><span>みんなの役に立ちそうな情報はどんどんシェアして、仲間の輪を広げましょう。</span></span></label>
@@ -445,8 +516,8 @@ section.step:not([hidden]) .stamp{animation:stamp .5s cubic-bezier(.3,1.8,.5,1) 
     <label class="rule"><input type="checkbox" id="r5"><span><b>個人的な質問はKotaかKanonへ</b><span>個人的な質問や相談は、KotaかKanonにDMしてください。</span></span></label>
   </div>
 
-  <div class="card" style="display:grid;gap:12px">
-    <p class="eyebrow">はじめの一歩 1</p>
+  <div class="card">
+    <p class="eyebrow">はじめの一歩</p>
     <h3>自己紹介文を作っておこう</h3>
     <p>権限がついたら「自己紹介（部員）」チャンネルに投稿します。ここで書いておけば、コピーして貼るだけです。</p>
     <div class="grid2">
@@ -454,25 +525,15 @@ section.step:not([hidden]) .stamp{animation:stamp .5s cubic-bezier(.3,1.8,.5,1) 
       <label class="field" for="i-grade">学年<input type="text" id="i-grade" placeholder="例: 高校2年"></label>
       <label class="field" for="i-country">どんな国に行ってみたい？<input type="text" id="i-country" placeholder="例: アメリカ、カナダ"></label>
       <label class="field" for="i-status">留学のステータス
-        <select id="i-status"><option>興味あり！</option><option>情報収集中</option><option>準備中</option><option>応募中</option><option>進学先決定</option></select>
-      </label>
+        <select id="i-status"><option>興味あり！</option><option>情報収集中</option><option>準備中</option><option>応募中</option><option>進学先決定</option></select></label>
     </div>
     <label class="field" for="i-field">興味あるプログラムや専攻<input type="text" id="i-field" placeholder="例: 環境学、交換留学"></label>
     <label class="field" for="i-msg">意気込み<textarea id="i-msg" rows="2" placeholder="例: 奨学金について情報を集めたいです！よろしくお願いします！"></textarea></label>
     <div class="dmsg" aria-label="Discordでの見え方のプレビュー">
       <span class="av" id="introAv">?</span>
-      <div class="dbody"><p class="dhead"><b id="introWho">あなた</b><time>今日 21:00</time></p><div class="out" id="introOut"></div></div>
+      <div class="dbody"><b id="introWho">あなた</b><time>今日</time><div class="out" id="introOut"></div></div>
     </div>
-    <div><button class="btn ghost" id="copyIntro" type="button">コピーする</button> <span class="feedback ok" id="copyMsg"></span></div>
-  </div>
-
-  <div class="card" style="display:grid;gap:10px">
-    <p class="eyebrow">はじめの一歩 2</p>
-    <h3>質問・相談してみよう</h3>
-    <div class="grid2">
-      <div><b>「この大学について知りたい」「この国での生活が知りたい」</b><p class="lead">特定の留学先についての質問は、地域別相談室へ。</p></div>
-      <div><b>「このメンターの留学パスを詳しく聞きたい」</b><p class="lead">特定のメンターへの質問は、メンターをメンションして聞きましょう。</p></div>
-    </div>
+    <div><button class="btn ghost" id="copyIntro" type="button"><i data-lucide="copy"></i>コピーする</button></div>
   </div>
 </section>
 
@@ -481,57 +542,50 @@ section.step:not([hidden]) .stamp{animation:stamp .5s cubic-bezier(.3,1.8,.5,1) 
   <div class="stephead"><span class="num" aria-hidden="true">06</span><div><p class="eyebrow">GATE 06</p><h2>確認クイズ</h2></div></div>
   <p class="lead">こんなとき、どうする？ 全問正解でDiscord IDを送れるようになります。間違えても何度でも選び直せます。</p>
   <div id="quiz" style="display:grid;gap:14px"></div>
-  <p class="score" id="score" aria-live="polite"></p>
 </section>
 
 <!-- 7 -->
 <section class="step" data-name="Discord IDを送る" hidden>
   <div class="stephead"><span class="num" aria-hidden="true">GO</span><div><p class="eyebrow">FINAL GATE</p><h2>Discord IDを送ろう</h2></div></div>
   <p>運営がこのIDでDiscordを検索して、チャンネルの権限を付けます。表示名ではなく、プロフィールの名前の下にある英数字のIDを入力してください。</p>
-  <form class="card" id="submitForm" style="display:grid;gap:14px" novalidate>
+  <form class="card" id="submitForm" novalidate>
     <label class="field" for="discordId">Discord ID <small>例: iz.sara.one_98902（Discordアプリでアイコンをタップすると表示されます）</small>
-      <input type="text" id="discordId" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="your.discord_id">
-    </label>
+      <input type="text" id="discordId" required autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="your.discord_id"></label>
     <label class="field" for="displayName">サーバーでの表示名 <small>任意。運営が見つけやすくなります</small>
-      <input type="text" id="displayName" placeholder="例: sara">
-    </label>
+      <input type="text" id="displayName" placeholder="例: sara"></label>
     <p class="feedback ng" id="formMsg" aria-live="polite"></p>
-    <div><button class="btn" type="submit" id="sendBtn">送信する</button></div>
+    <div><button class="btn accent" type="submit" id="sendBtn"><i data-lucide="send"></i>送信して搭乗する</button></div>
   </form>
   <p class="notice" id="previewNote" hidden>プレビュー版のため、送信先のGoogleフォームはまだつながっていません。送信すると完了画面だけ表示されます。</p>
 </section>
 
 <!-- 8 -->
 <section class="step" data-name="完了" hidden>
-  <div class="hero">
-    <h1>オリエンテーション完了です</h1>
+  <div style="text-align:center;display:grid;gap:6px">
+    <p class="eyebrow">ALL GATES CLEARED</p>
+    <h1>オリエンテーション完了！</h1>
     <p class="lead" id="doneLead">ご参加ありがとうございました。</p>
   </div>
-  <div class="pass">
-    <div class="main">
-      <span class="pill" style="justify-self:start">BOARDING PASS</span>
-      <dl>
-        <div><dt>PASSENGER</dt><dd id="passName">-</dd></div>
-        <div><dt>DISCORD ID</dt><dd id="passId">-</dd></div>
-        <div><dt>FROM</dt><dd>オリエンテーション</dd></div>
-        <div><dt>TO</dt><dd>留学部 campus</dd></div>
-      </dl>
-    </div>
-    <div class="stub">留学部</div>
-    <span class="stamp" aria-hidden="true">APPROVED</span>
+  <div class="passport" id="passport">
+    <span class="approved" aria-hidden="true">APPROVED</span>
+    <div class="pp-head"><img src="img/logo.png" alt=""><div><div class="pp-title">RYUGAKUBU PASSPORT</div><small style="opacity:.85">みんなの留学部 部員証</small></div></div>
+    <dl>
+      <div><dt>NAME</dt><dd id="ppName">-</dd></div>
+      <div><dt>DISCORD ID</dt><dd id="ppId">-</dd></div>
+      <div><dt>DESTINATION</dt><dd id="ppDest">-</dd></div>
+      <div><dt>CLASS</dt><dd id="ppType">-</dd></div>
+      <div style="grid-column:1/-1"><dt>STAMPS</dt><dd><div class="stamps" id="ppStamps"></div></dd></div>
+    </dl>
   </div>
-  <div class="card" style="display:grid;gap:12px">
+  <button class="btn accent" id="departBtn" type="button" style="justify-self:stretch;font-size:1.1rem;min-height:60px"><i data-lucide="plane-takeoff"></i>Discordへ出発！</button>
+  <div class="card" id="matchDone" hidden>
+    <h3>相談するときは、この先輩をメンションしてみてね</h3>
+    <div class="mentors" id="matchesDone"></div>
+  </div>
+  <div class="card">
     <h3>権限がついたら、まずここへ</h3>
     <ol class="next-steps" id="nextSteps"></ol>
-  </div>
-  <div class="card" style="display:grid;gap:8px">
-    <h3>このあとの流れ</h3>
-    <ol style="margin:0;padding-left:1.3em">
-      <li>運営がDiscord IDを確認して、チャンネルの権限を付けます。</li>
-      <li>Discordを開くと、交流・相談のチャンネルが見えるようになります。</li>
-      <li>「自己紹介（部員）」に、作っておいた自己紹介を投稿しましょう。</li>
-    </ol>
-    <p class="lead">しばらくたっても見えるチャンネルが増えない場合は、Discordの「質問・お問い合わせ」チャンネルで声をかけてください。</p>
+    <p class="lead">運営がDiscord IDを確認して権限を付けると、交流・相談のチャンネルが見えるようになります。しばらくたっても増えない場合は、Discordの「質問・お問い合わせ」チャンネルで声をかけてください。</p>
   </div>
 </section>
 
@@ -545,187 +599,307 @@ section.step:not([hidden]) .stamp{animation:stamp .5s cubic-bezier(.3,1.8,.5,1) 
   <button class="btn" id="next" type="button">はじめる</button>
 </div></div>
 
-<script src="content.js"></script>
 <script>
+/* =====================================================================
+   設定（運営が編集する場所）
+   ===================================================================== */
+const CONFIG = {
+  // 送信先のGoogleフォーム（entry番号は README を参照）
+  form: {
+    action: "https://docs.google.com/forms/d/e/1FAIpQLSedTzCoYkJDSA0qQXbjn-nviuQ_5FizbeXDGO6HOFHMJdrZFQ/formResponse",
+    discordId: "entry.1510779405",
+    displayName: "entry.951351487",
+    nickname: "entry.1696208148"
+  },
+  // 「Discordへ出発！」ボタンで開くURL（サーバーの招待リンクなど）。空なら演出だけ。
+  discordUrl: ""
+};
+
+// メンター。regions / fields を埋めると「あなたに近い先輩」診断に出るようになります。
+// regions は REGIONS、fields は FIELDS の言葉と同じものを書いてください。
+// 写真はスライドから切り出したものです。名前と写真の組み合わせを確認してから regions を埋めてください。
+const MENTORS = [
+  {name:"Kanon", school:"Middlebury College", regions:["アメリカ"], fields:[], photo:"img/kanon.jpg", note:"全体統括。IB校からアメリカのリベラルアーツ大学へ。笹川平和財団奨学金の一期生。"},
+  {name:"Kota",  school:"The University of Sydney", regions:["オーストラリア"], fields:[], photo:"img/kota.jpg", note:"全体統括。高校2年で留学を決意し、ファンデーションコースを経てシドニー大学へ。"},
+  {name:"Haruna", school:"", regions:[], fields:[], photo:"img/mentors/haruna.jpg"},
+  {name:"Aoi H", school:"", regions:[], fields:[], photo:"img/mentors/aoih.jpg"},
+  {name:"Sohta", school:"", regions:[], fields:[], photo:"img/mentors/sohta.jpg"},
+  {name:"Yumi", school:"", regions:[], fields:[], photo:"img/mentors/yumi.jpg"},
+  {name:"Sarina", school:"", regions:[], fields:[], photo:"img/mentors/sarina.jpg"},
+  {name:"Yuka", school:"", regions:[], fields:[], photo:"img/mentors/yuka.jpg"},
+  {name:"Kaera", school:"", regions:[], fields:[], photo:"img/mentors/kaera.jpg"},
+  {name:"Taku", school:"", regions:[], fields:[], photo:"img/mentors/taku.jpg"},
+  {name:"Shoichiro", school:"", regions:[], fields:[], photo:"img/mentors/shoichiro.jpg"},
+  {name:"Rion", school:"", regions:[], fields:[], photo:"img/mentors/rion.jpg"},
+  {name:"Junya", school:"", regions:[], fields:[], photo:"img/mentors/junya.jpg"},
+  {name:"Taiki", school:"", regions:[], fields:[], photo:"img/mentors/taiki.jpg"},
+  {name:"Sara", school:"", regions:[], fields:[], photo:"img/mentors/sara.jpg"},
+  {name:"Saku", school:"", regions:[], fields:[], photo:"img/mentors/saku.jpg"},
+  {name:"Yumiko", school:"", regions:[], fields:[], photo:"img/mentors/yumiko.jpg"},
+  {name:"Hiroe", school:"", regions:[], fields:[], photo:"img/mentors/hiroe.jpg"},
+  {name:"Aoi O", school:"", regions:[], fields:[], photo:"img/mentors/aoio.jpg"},
+  {name:"Sato", school:"", regions:[], fields:[], photo:"img/mentors/sato.jpg"}
+];
+
+const REGIONS = ["アメリカ","カナダ","イギリス","ヨーロッパ","オーストラリア","アジア","まだ決めていない"];
+const TYPES   = ["高校留学","大学進学","交換留学","大学院","まだ決めていない"];
+const FIELDS  = ["ビジネス・経済","理系・エンジニア","人文・社会","アート・デザイン","医療・生命","まだ決めていない"];
+
+const SORT = [
+  {q:"オーストラリアの大学について質問して、答えをあとから見返せるように残したい", a:1, e:"フォーラムチャンネル。地域別相談室にはテーマごとのスレッドがあり、やりとりがまとまって残ります。"},
+  {q:"作業しながら、ほかの部員と声でゆるく話したい", a:2, e:"ボイスチャンネル。「作業ルーム」や「雑談」に入るだけで通話できます。"},
+  {q:"留学先での日常の写真をみんなにシェアしたい", a:0, e:"テキストチャンネル。「海外大生の日常」などに投稿して、リアクションや返信で交流します。"}
+];
+
+const QUIZ = [
+  {q:"オーストラリアの大学の寮の雰囲気を知りたい。どこで聞く？", o:["地域別相談室のオーストラリアのスレッド","KotaかKanonにDM","ボイスチャンネルの雑談"], a:0,
+   e:"特定の留学先についての質問は地域別相談室へ。みんなが見えるので、同じ疑問を持つ人の役にも立ちます。"},
+  {q:"JASSOの奨学金について質問したい。どこで聞く？", o:["知り合いのメンターに個別でDM","#奨学金 チャンネル","自己紹介（部員）チャンネル"], a:1,
+   e:"「一人の質問はみんなの質問」。テーマに合ったチャンネルで、みんなが見えるように質問しましょう。"},
+  {q:"あるメンターの留学パスを詳しく聞きたい。どうする？", o:["チャンネルでそのメンターをメンションして質問する","運営よりチャンネルに書き込む","質問はやめておく"], a:0,
+   e:"特定のメンターへの質問は、@でメンションすると本人に通知が届きます。"},
+  {q:"家庭の事情など、個人的な相談がある。どうする？", o:["おしゃべりチャンネルに書く","KotaかKanonにDMする","地域別相談室に書く"], a:1,
+   e:"個人的な質問や相談は、KotaかKanonへのDMでお願いします。"},
+  {q:"留学フェアの役立つ情報を見つけた！ どうする？", o:["自分だけで使う","チャンネルでみんなにシェアする","メンターにだけ教える"], a:1,
+   e:"部員同士でもどんどん情報交換して、仲間の輪を広げましょう。"},
+  {q:"権限をもらうために運営に送るのは？", o:["サーバーで表示される名前","Discord ID（名前の下の英数字）","Instagramのアカウント名"], a:1,
+   e:"表示名は重なったり変えられたりするので、人によって重ならないDiscord IDを送ります。"}
+];
+
+/* =====================================================================
+   ここから下はアプリ本体
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+const icons = () => { if (window.lucide) lucide.createIcons({ attrs: { "stroke-width": 2 } }); };
 
 const store = {
-  get(){ try{ return JSON.parse(localStorage.getItem("ryugakubu-orientation")||"{}"); }catch(e){ return {}; } },
-  set(v){ try{ localStorage.setItem("ryugakubu-orientation", JSON.stringify(v)); }catch(e){} }
+  get(k, d){ try{ const v = localStorage.getItem(k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
 };
-const state = Object.assign({step:0, nick:"", regions:[], hot:false, flips:[], guess:{}, campus:false, sort:{}, quiz:{}, rules:[], intro:{}, sent:null}, store.get());
-const save = () => store.set(state);
+const KEY = "ryugakubu-orientation";
+const state = Object.assign({step:0, nick:"", regions:[], type:"", fields:[], stamps:[], hot:false, flips:[], leaders:[], guess:{},
+  campus:false, sort:{}, chat:false, quiz:{}, rules:[], intro:{}, sent:null}, store.get(KEY, {}));
+const save = () => store.set(KEY, state);
 
+/* ---------- sound (Web Audio, no files) ---------- */
+const Sound = {
+  ctx:null, muted: store.get("ryugakubu-muted", false),
+  ac(){ if(this.muted) return null;
+    if(!this.ctx){ const C = window.AudioContext || window.webkitAudioContext; if(!C) return null; this.ctx = new C(); }
+    if(this.ctx.state === "suspended") this.ctx.resume(); return this.ctx; },
+  tone(freq, at, dur, type="sine", vol=.18, slideTo){
+    const c = this.ac(); if(!c) return; const t = c.currentTime + at;
+    const o = c.createOscillator(), g = c.createGain(); o.type = type; o.frequency.setValueAtTime(freq, t);
+    if(slideTo) o.frequency.exponentialRampToValueAtTime(slideTo, t + dur);
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + .012); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(c.destination); o.start(t); o.stop(t + dur + .05);
+  },
+  noise(at, dur, vol=.3, freq=800){
+    const c = this.ac(); if(!c) return; const t = c.currentTime + at;
+    const b = c.createBuffer(1, Math.ceil(c.sampleRate*dur), c.sampleRate), d = b.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i] = (Math.random()*2-1) * (1 - i/d.length);
+    const s = c.createBufferSource(), f = c.createBiquadFilter(), g = c.createGain();
+    s.buffer = b; f.type = "lowpass"; f.frequency.value = freq; g.gain.value = vol;
+    s.connect(f).connect(g).connect(c.destination); s.start(t);
+  },
+  pop(){ this.tone(520, 0, .09, "sine", .2, 880); },
+  tick(){ this.tone(1200, 0, .04, "square", .05); },
+  wrong(){ this.tone(220, 0, .18, "triangle", .14, 150); },
+  correct(){ [523, 659, 784, 1047].forEach((f,i)=> this.tone(f, i*.08, .22, "triangle", .14)); },
+  stamp(){ this.noise(0, .12, .5, 500); this.tone(140, 0, .16, "sine", .3, 60); },
+  sparkle(){ for(let i=0;i<8;i++) this.tone(1600 + Math.random()*1800, i*.06, .16, "sine", .06); },
+  cheer(){ this.noise(0, 1.1, .12, 2500); [523,659,784,1047,1319].forEach((f,i)=> this.tone(f, .1 + i*.1, .4, "triangle", .12)); setTimeout(()=>this.sparkle(), 500); }
+};
+function setMute(m){
+  Sound.muted = m; store.set("ryugakubu-muted", m);
+  const b = $("mute"); b.setAttribute("aria-pressed", String(m)); b.setAttribute("aria-label", m ? "効果音をオンにする" : "効果音をオフにする");
+  b.innerHTML = `<i data-lucide="${m ? "volume-x" : "volume-2"}"></i>`; icons();
+}
+$("mute").onclick = () => { setMute(!Sound.muted); if(!Sound.muted) Sound.pop(); };
+
+/* ---------- confetti / toast / flyers ---------- */
+const BRAND = ["#187496","#FF914D","#30BFC5","#D0F5F6","#FFEADD"];
+function burst(power=1, origin){
+  if(!window.confetti || reduceMotion()) return;
+  confetti({particleCount: Math.round(60*power), spread: 70 + 20*power, startVelocity: 30 + 10*power, origin: origin || {y:.6}, colors: BRAND, disableForReducedMotion:true, zIndex: 70});
+}
+function bigCelebrate(){
+  if(!window.confetti || reduceMotion()) return;
+  const end = Date.now() + 1200;
+  (function f(){ confetti({particleCount:6, angle:60, spread:60, origin:{x:0, y:.7}, colors:BRAND, zIndex:70});
+    confetti({particleCount:6, angle:120, spread:60, origin:{x:1, y:.7}, colors:BRAND, zIndex:70});
+    if(Date.now() < end) requestAnimationFrame(f); })();
+}
+let toastTimer;
+function toast(msg){ const t = $("toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer = setTimeout(()=>t.classList.remove("show"), 1800); }
+function originOf(el){ const r = el.getBoundingClientRect(); return {x:(r.left + r.width/2)/innerWidth, y:(r.top + r.height/2)/innerHeight}; }
+function flyEmojis(el, list){
+  if(reduceMotion()) return; const r = el.getBoundingClientRect();
+  list.forEach((e,i)=>{ const s = document.createElement("span"); s.className = "flyer"; s.textContent = e;
+    s.style.left = (r.left + r.width/2 - 14 + (i-1)*24) + "px"; s.style.top = (r.top) + "px";
+    s.style.setProperty("--dx", ((Math.random()-.5)*120) + "px"); s.style.setProperty("--rot", ((Math.random()-.5)*60) + "deg");
+    s.style.animationDelay = (i*90) + "ms"; document.body.appendChild(s); setTimeout(()=>s.remove(), 1600); });
+}
+
+/* ---------- live boarding pass ---------- */
+const GATES = ["01","02","03","04","05","06"];
+function renderStamps(el, just){
+  el.innerHTML = "";
+  GATES.forEach(g=>{ const s = document.createElement("span"); const on = state.stamps.includes(g);
+    s.className = "stamp-slot" + (on ? " on" : "") + (just===g ? " just" : ""); s.textContent = on ? "OK" : g; s.title = "GATE " + g; el.appendChild(s); });
+}
+function printField(id, value){
+  const el = $(id), v = value || "— — —"; if(el.textContent === v) return;
+  el.textContent = v; el.classList.remove("printed"); void el.offsetWidth; el.classList.add("printed");
+}
+function renderTicket(just){
+  printField("tkName", state.nick);
+  printField("tkDest", state.regions.join("・"));
+  printField("tkType", state.type);
+  printField("tkField", state.fields.join("・"));
+  renderStamps($("tkStamps"), just);
+  $("tkCount").textContent = `${state.stamps.length}/6`;
+}
+function earn(gate){
+  if(state.stamps.includes(gate)) return;
+  state.stamps.push(gate); save();
+  const tk = $("ticket");
+  if(!tk.classList.contains("open")) setTicketOpen(true, true);
+  renderTicket(gate);
+  // stamper drops onto the slot
+  const slot = [...$("tkStamps").children].find(s => s.title === "GATE " + gate);
+  if(slot && !reduceMotion()){
+    const r = slot.getBoundingClientRect(), st = document.createElement("span");
+    st.className = "stamper"; st.innerHTML = '<i data-lucide="stamp"></i>'; document.body.appendChild(st); icons();
+    st.animate([{left:(r.left-2)+"px", top:(r.top-70)+"px", opacity:0, transform:"rotate(-20deg)"},
+                {left:(r.left-2)+"px", top:(r.top-36)+"px", opacity:1, transform:"rotate(-10deg)", offset:.6},
+                {left:(r.left-2)+"px", top:(r.top-14)+"px", opacity:1, transform:"rotate(0)", offset:.85},
+                {left:(r.left-2)+"px", top:(r.top-40)+"px", opacity:0, transform:"rotate(0)"}], {duration:800, easing:"ease-in-out"}).onfinish = ()=> st.remove();
+    setTimeout(()=>{ tk.classList.remove("bump"); void tk.offsetWidth; tk.classList.add("bump"); Sound.stamp(); burst(.5, originOf(slot)); }, 600);
+  } else Sound.stamp();
+  toast(`GATE ${gate} のスタンプをゲット！`);
+  if(state.stamps.length === 6){ setTimeout(()=>{ Sound.cheer(); bigCelebrate(); toast("スタンプ全部そろった！"); }, 900); }
+}
+let autoClose;
+function setTicketOpen(open, temporary){
+  $("ticket").classList.toggle("open", open); $("ticketToggle").setAttribute("aria-expanded", String(open));
+  clearTimeout(autoClose); if(temporary) autoClose = setTimeout(()=> setTicketOpen(false), 2600);
+}
+$("ticketToggle").onclick = ()=>{ Sound.tick(); setTicketOpen(!$("ticket").classList.contains("open")); };
+
+/* ---------- navigation ---------- */
 const steps = [...document.querySelectorAll("section.step")];
-const LAST_CONTENT = 6;               // quiz step
-const $ = id => document.getElementById(id);
-
+const LAST = 6;
 function gate(i){
+  if(i===0) return state.regions.length ? "" : "行ってみたい地域を選んでください";
+  if(i===1){ const n = 2 - state.leaders.length; return n>0 ? `あと${n}枚めくってください` : ""; }
   if(i===3){ const n = 3 - state.flips.length; return n>0 ? `あと${n}枚めくってください` : ""; }
-  if(i===4){
-    if(!state.hot) return "Discord IDの場所をタップしてください";
-    const n = SORT.filter((q,k)=>state.sort[k]===q.a).length;
-    return n<SORT.length ? `チャンネル問題 ${n} / ${SORT.length}` : "";
-  }
-  if(i===5){ const n = 5 - state.rules.length; return n>0 ? `ルールにあと${n}つチェック` : ""; }
+  if(i===4){ if(!state.hot) return "Discord IDの場所をタップしてください";
+    const n = SORT.filter((q,k)=>state.sort[k]===q.a).length; return n<SORT.length ? `チャンネル問題 ${n} / ${SORT.length}` : ""; }
+  if(i===5){ if(!state.chat) return "質問を送ってみてください"; const n = 5 - state.rules.length; return n>0 ? `ルールにあと${n}つチェック` : ""; }
   if(i===6){ const ok = QUIZ.filter((q,k)=>state.quiz[k]===q.a).length; return ok<QUIZ.length ? `${ok} / ${QUIZ.length} 問正解` : ""; }
   return "";
 }
-
 let lastGate = {step:-1, locked:false};
 function render(){
   const i = state.step;
   steps.forEach((s,k)=> s.hidden = k!==i);
-  const shown = Math.min(i, LAST_CONTENT);
+  [...steps[i].children].forEach((c,k)=> c.style.setProperty("--i", k));
+  const shown = Math.min(i, LAST);
   $("stepName").textContent = steps[i].dataset.name;
   $("stepCount").textContent = i>=7 ? "6 / 6" : `${shown} / 6`;
-  const pct = (i>=7 ? 100 : shown/6*100);
-  $("trackDone").style.width = pct+"%";
-  $("plane").style.left = Math.max(2, Math.min(98, pct))+"%";
-  const g = gate(i);
+  const pct = i>=7 ? 100 : shown/6*100;
+  $("trackDone").style.width = pct + "%"; $("plane").style.left = Math.max(3, Math.min(97, pct)) + "%";
+  $("tkGate").textContent = i===0 ? "00" : i>=7 ? "GO" : "0"+i;
+  $("passbar").hidden = i===8;
+  const g = gate(i), next = $("next");
+  if(lastGate.step===i && lastGate.locked && !g){ next.classList.remove("unlocked"); void next.offsetWidth; next.classList.add("unlocked"); Sound.sparkle(); toast("次へ進めます！"); }
+  lastGate = {step:i, locked:!!g};
   $("gateHint").textContent = g;
   $("back").hidden = i===0 || i===8;
-  const next = $("next");
-  next.hidden = i>=7;
-  if(lastGate.step===i && lastGate.locked && !g){ next.classList.remove("unlocked"); void next.offsetWidth; next.classList.add("unlocked"); toast("次へ進めます！"); }
-  lastGate = {step:i, locked:!!g};
-  next.disabled = !!g;
-  [...steps[i].children].forEach((c,k)=> c.style.setProperty("--i", k));
-  next.textContent = i===0 ? "はじめる" : i===LAST_CONTENT ? "Discord IDを送る" : "次へ";
-  if(i===7) $("previewNote").hidden = !!(FORM.action && FORM.discordId);
-  if(i===8){
-    $("passName").textContent = state.nick || "部員";
-    $("passId").textContent = state.sent ? state.sent.id : "-";
-    $("doneLead").textContent = (state.nick ? state.nick+"さん、" : "") + "ご参加ありがとうございました。";
-    renderNext();
-  }
+  next.hidden = i>=7; next.disabled = !!g;
+  next.textContent = i===0 ? "搭乗する" : i===LAST ? "Discord IDを送る" : "次のゲートへ";
+  if(i===7) $("previewNote").hidden = !!(CONFIG.form.action && CONFIG.form.discordId);
+  if(i===8) renderDone();
 }
-function go(d){ state.step = Math.max(0, Math.min(8, state.step+d)); save(); render(); window.scrollTo({top:0}); }
-$("next").onclick = ()=>{ if(state.step===0){ state.nick = $("nick").value.trim(); } go(1); };
+function go(d){
+  const from = state.step;
+  if(d>0 && from>=1 && from<=6) earn(GATES[from-1]);
+  state.step = Math.max(0, Math.min(8, from + d)); save(); render(); scrollTo({top:0, behavior: reduceMotion() ? "auto" : "smooth"});
+  Sound.pop();
+}
+$("next").onclick = ()=> go(1);
 $("back").onclick = ()=> go(-1);
 
-// step 0
+/* ---------- step 0: profile + mentor match ---------- */
+function chipGroup(el, list, getSel, onPick){
+  list.forEach(label=>{
+    const c = document.createElement("button"); c.type = "button"; c.className = "chip"; c.textContent = label;
+    c.setAttribute("aria-pressed", String(getSel().includes(label)));
+    c.onclick = ()=>{ onPick(label); [...el.children].forEach(x=> x.setAttribute("aria-pressed", String(getSel().includes(x.textContent)))); Sound.pop(); };
+    el.appendChild(c);
+  });
+}
+const UNDECIDED = "まだ決めていない";
+function toggleMulti(arr, v){ if(arr.includes(v)) return arr.filter(x=>x!==v); return v===UNDECIDED ? [UNDECIDED] : arr.filter(x=>x!==UNDECIDED).concat(v); }
+chipGroup($("regions"), REGIONS, ()=>state.regions, v=>{ state.regions = toggleMulti(state.regions, v); afterProfile(); });
+chipGroup($("types"), TYPES, ()=>[state.type], v=>{ state.type = state.type===v ? "" : v; afterProfile(); });
+chipGroup($("fields"), FIELDS, ()=>state.fields, v=>{ state.fields = toggleMulti(state.fields, v); afterProfile(); });
 $("nick").value = state.nick;
 $("nick").addEventListener("input", e=>{ state.nick = e.target.value.trim(); save(); });
+$("nick").addEventListener("change", ()=>{ renderTicket(); Sound.tick(); });
 
-// flip cards (step 1 and 3)
-document.querySelectorAll(".flip").forEach((b,k)=>{
-  const inStep3 = b.closest("section").dataset.name==="できること";
-  if(inStep3 && state.flips.includes(k)) b.setAttribute("aria-expanded","true");
-  b.onclick = ()=>{
-    const open = b.getAttribute("aria-expanded")!=="true";
-    b.setAttribute("aria-expanded", String(open));
-    if(inStep3 && open && !state.flips.includes(k)){ state.flips.push(k); save(); }
-    if(inStep3){ const n = 3-state.flips.length; $("flipHint").textContent = n>0 ? `あと${n}枚` : "全部読みました"; }
-    render();
-  };
-});
-$("flipHint").textContent = 3-state.flips.length>0 ? `あと${3-state.flips.length}枚` : "全部読みました";
-
-// regions (step 0)
-document.querySelectorAll("#regions .chip").forEach(c=>{
-  const r = c.textContent;
-  c.setAttribute("aria-pressed", String(state.regions.includes(r)));
-  c.onclick = ()=>{
-    const undecided = "まだ決めていない";
-    let list = state.regions.filter(x=>x!==r);
-    if(!state.regions.includes(r)) list = r===undecided ? [undecided] : list.filter(x=>x!==undecided).concat(r);
-    state.regions = list; save();
-    document.querySelectorAll("#regions .chip").forEach(x=>x.setAttribute("aria-pressed", String(list.includes(x.textContent))));
-    const iC = $("i-country");
-    if(iC && !state.intro["i-country"]){ iC.value = list.filter(x=>x!==undecided).join("、"); $("introOut").textContent = introText(); }
-  };
-});
-
-// number guessing (step 2)
-document.querySelectorAll(".guess").forEach(card=>{
-  const k = card.dataset.k, a = Number(card.dataset.a);
-  const opts = [...card.querySelectorAll(".opt")], rv = card.querySelector(".reveal");
-  const show = j=>{
-    opts.forEach((o,x)=>{ o.classList.remove("right","wrong"); if(x===a) o.classList.add("right"); else if(x===j) o.classList.add("wrong"); o.disabled = true; });
-    rv.hidden = false;
-    countUp(rv.querySelector(".big"));
-  };
-  opts.forEach((o,j)=> o.onclick = ()=>{ state.guess[k]=j; save(); show(j); });
-  if(state.guess[k]!=null) show(state.guess[k]);
-});
-
-// before / after toggle (step 4)
-function setCampus(v){
-  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===v)));
-  document.querySelectorAll(".compare figure").forEach(f=> f.hidden = f.dataset.v!==v);
-  if(v==="after"){ state.campus = true; save();
-    $("campusMsg").textContent = "交流しよう・学習相談のカテゴリが増えて、仲間やメンターとより多く関われるようになります。"; }
+function matchMentors(){
+  const scored = MENTORS.map(m=>({m, s: m.regions.filter(r=>state.regions.includes(r)).length*2 + m.fields.filter(f=>state.fields.includes(f)).length}))
+    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2).map(x=>x.m);
+  return scored;
 }
-document.querySelectorAll(".seg button").forEach(b=> b.onclick = ()=> setCampus(b.dataset.v));
+function mentorCard(m, k, why){
+  const d = document.createElement("div"); d.className = "mentor"; d.style.setProperty("--k", k);
+  d.innerHTML = `<img alt=""><div><b></b><span class="school"></span><p class="why"></p><p class="why">相談するときは <span class="mention"></span> とメンションしてみてね</p></div>`;
+  d.querySelector("img").src = m.photo; d.querySelector("b").textContent = m.name; d.querySelector(".school").textContent = m.school;
+  d.querySelectorAll(".why")[0].textContent = why || m.note || ""; d.querySelector(".mention").textContent = "@" + m.name;
+  return d;
+}
+let matchKey = "";
+function renderMatches(target, note){
+  const list = matchMentors(), el = $(target); const key = list.map(m=>m.name).join();
+  if(target==="matches" && key===matchKey && el.children.length) return; if(target==="matches") matchKey = key;
+  el.innerHTML = "";
+  const regs = state.regions.filter(r=>r!==UNDECIDED);
+  if(list.length){ list.forEach((m,k)=> el.appendChild(mentorCard(m, k, `${m.regions.filter(r=>regs.includes(r)).join("・")}の先輩`))); }
+  else { [MENTORS[0], MENTORS[1]].forEach((m,k)=> el.appendChild(mentorCard(m, k))); }
+  if(note) $(note).textContent = list.length ? "" :
+    (regs.length ? `${regs.join("・")}に詳しいメンターは、Discordの地域別相談室で見つかります。まずは全体統括の2人に気軽に声をかけてみてください。`
+                 : "行き先が決まっていなくても大丈夫。まずは全体統括の2人に気軽に声をかけてみてください。");
+  return list.length;
+}
+function afterProfile(){
+  save(); renderTicket();
+  const c = $("matchCard"), wasHidden = c.hidden;
+  if(state.regions.length){ c.hidden = false; const n = renderMatches("matches", "matchNote"); if(wasHidden){ Sound.sparkle(); if(n) burst(.4, originOf(c)); } }
+  const iC = $("i-country"); if(iC && !state.intro["i-country"]){ iC.value = state.regions.filter(x=>x!==UNDECIDED).join("、"); updateIntro(); }
+  render();
+}
 
-// channel sorting game (step 4)
-const SORT = [
-  {q:"オーストラリアの大学について質問して、答えをあとから見返せるように残したい", a:1,
-   e:"フォーラムチャンネル。地域別相談室にはテーマごとのスレッドがあり、やりとりがまとまって残ります。"},
-  {q:"作業しながら、ほかの部員と声でゆるく話したい", a:2,
-   e:"ボイスチャンネル。「作業ルーム」や「雑談」に入るだけで通話できます。"},
-  {q:"留学先での日常の写真をみんなにシェアしたい", a:0,
-   e:"テキストチャンネル。「海外大生の日常」などに投稿して、リアクションや返信で交流します。"}
-];
-const TYPES = ["# テキスト","💬 フォーラム","🔊 ボイス"];
-SORT.forEach((item,k)=>{
-  const box = document.createElement("div"); box.className = "sortq";
-  box.innerHTML = `<b>${k+1}. ${item.q}</b><div class="opts"></div><p class="explain" hidden></p>`;
-  const opts = box.querySelector(".opts"), ex = box.querySelector(".explain");
-  const mark = j=>{
-    opts.querySelectorAll(".opt").forEach((x,y)=>{ x.classList.remove("right","wrong"); if(y===j) x.classList.add(j===item.a?"right":"wrong"); });
-    ex.hidden = false; ex.textContent = j===item.a ? "正解！ "+item.e : "ちがいます。もう一度選んでみてください。";
-  };
-  TYPES.forEach((t,j)=>{
-    const b = document.createElement("button"); b.type="button"; b.className="opt"; b.textContent=t;
-    b.onclick = ()=>{ state.sort[k]=j; save(); mark(j); render(); };
-    opts.appendChild(b);
-  });
-  if(state.sort[k]!=null) mark(state.sort[k]);
-  $("sort").appendChild(box);
-});
-
-// done page: personalised next steps
-function renderNext(){
-  const regs = state.regions.filter(r=>r!=="まだ決めていない");
-  const items = [
-    ["「自己紹介（部員）」に投稿", "STEP 5で作った自己紹介文を貼り付けましょう。"],
-    regs.length
-      ? ["「地域別相談室」をのぞく", `${regs.join("・")}についての投稿を探して、気になる質問にリアクションしてみましょう。`]
-      : ["「地域別相談室」をのぞく", "いろいろな国の投稿を見て、行ってみたい地域を探してみましょう。"],
-    ["「海外大生の日常」を見る", "メンターたちの留学生活をのぞいて、気になったら返信してみましょう。"]
-  ];
-  $("nextSteps").innerHTML = "";
-  items.forEach(([t,d],k)=>{
-    const li = document.createElement("li");
-    li.innerHTML = `<span class="n">${k+1}</span><span><b></b><br><span class="lead"></span></span>`;
-    li.querySelector("b").textContent = t; li.querySelector(".lead").textContent = d;
-    $("nextSteps").appendChild(li);
+/* ---------- flip cards (step 1 leaders, step 3 parts) ---------- */
+function wireFlips(container, key, total){
+  [...$(container).querySelectorAll(".flip")].forEach((b,k)=>{
+    if(state[key].includes(k)) b.setAttribute("aria-expanded","true");
+    b.onclick = ()=>{ const open = b.getAttribute("aria-expanded")!=="true"; b.setAttribute("aria-expanded", String(open)); Sound.pop();
+      if(open && !state[key].includes(k)){ state[key].push(k); save(); if(state[key].length===total) Sound.correct(); }
+      render(); };
   });
 }
+wireFlips("leaders", "leaders", 2);
+wireFlips("parts", "flips", 3);
 
-// confetti on completion
-function confetti(){
-  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-  const c = document.createElement("canvas"); c.id = "confetti"; document.body.appendChild(c);
-  const ctx = c.getContext("2d"), W = c.width = innerWidth, H = c.height = innerHeight;
-  const css = getComputedStyle(document.documentElement);
-  const colors = ["--sea","--sun","--ok","--navy"].map(v=>css.getPropertyValue(v).trim());
-  const ps = Array.from({length:120},()=>({x:W/2, y:H/3, vx:(Math.random()-.5)*12, vy:Math.random()*-10-4,
-    s:4+Math.random()*5, r:Math.random()*6, c:colors[Math.floor(Math.random()*colors.length)]}));
-  let t = 0;
-  (function tick(){
-    ctx.clearRect(0,0,W,H);
-    ps.forEach(p=>{ p.vy += .35; p.x += p.vx; p.y += p.vy; p.r += .1;
-      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*1.6); ctx.restore(); });
-    if(++t < 150) requestAnimationFrame(tick); else c.remove();
-  })();
-}
-
-// ===== motion helpers =====
-const reduceMotion = ()=> matchMedia("(prefers-reduced-motion: reduce)").matches;
-let toastTimer;
-function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1800); }
+/* ---------- step 2 ---------- */
+document.querySelectorAll("#principles .chip").forEach(c=> c.onclick = ()=>{
+  document.querySelectorAll("#principles .chip").forEach(x=>x.setAttribute("aria-pressed","false"));
+  c.setAttribute("aria-pressed","true"); $("principleMsg").textContent = c.dataset.msg; Sound.pop(); flyEmojis(c, ["💖"]);
+});
 function countUp(el){
   if(!el || reduceMotion() || el.dataset.done) return; el.dataset.done = 1;
   const txt = el.textContent, m = txt.match(/[\d.]+/); if(!m) return;
@@ -733,130 +907,218 @@ function countUp(el){
   (function f(now){ const k = Math.min(1,(now-t0)/900), e = 1-Math.pow(1-k,3);
     el.textContent = txt.replace(m[0], (target*e).toFixed(dec)); if(k<1) requestAnimationFrame(f); else el.textContent = txt; })(t0);
 }
-function updateAvatar(){
-  const n = ($("i-name").value||state.nick||"").trim();
-  $("introAv").textContent = n ? [...n][0] : "?"; $("introWho").textContent = n || "あなた";
-}
-let typingTimer;
-function typing(){ const d=document.querySelector(".dmsg"); d.classList.add("typing"); clearTimeout(typingTimer); typingTimer=setTimeout(()=>d.classList.remove("typing"),900); }
+document.querySelectorAll(".guess").forEach(card=>{
+  const k = card.dataset.k, a = Number(card.dataset.a), opts = [...card.querySelectorAll(".opt")], rv = card.querySelector(".reveal");
+  const show = (j, fresh)=>{
+    opts.forEach((o,x)=>{ o.classList.remove("right","wrong"); if(x===a) o.classList.add("right"); else if(x===j) o.classList.add("wrong"); o.disabled = true; });
+    rv.hidden = false; countUp(rv.querySelector(".big"));
+    if(fresh){ if(j===a){ Sound.correct(); burst(.6, originOf(opts[a])); toast("大正解！"); } else { Sound.wrong(); toast("おしい！正解はこちら"); } }
+  };
+  opts.forEach((o,j)=> o.onclick = ()=>{ state.guess[k] = j; save(); show(j, true); });
+  if(state.guess[k]!=null) show(state.guess[k], false);
+});
 document.querySelectorAll(".timeline li").forEach((li,j)=> li.style.setProperty("--j", j));
-// lightbox
-const lb = $("lightbox");
-document.querySelectorAll("figure img, .shots img").forEach(img=> img.addEventListener("click", ()=>{ lb.querySelector("img").src = img.src; lb.querySelector("img").alt = img.alt; lb.hidden = false; }));
-lb.addEventListener("click", ()=> lb.hidden = true);
-addEventListener("keydown", e=>{ if(e.key==="Escape") lb.hidden = true; });
-// plane path fitted to the welcome card
-function fitSky(){
-  const sky = document.querySelector(".sky"); if(!sky) return;
-  const w = sky.clientWidth, h = sky.clientHeight;
-  const d = `M-10 ${h*.36} C ${w*.25} ${h*.02}, ${w*.7} ${h*.02}, ${w+10} ${h*.30}`;
-  document.querySelector(".sky-plane").style.offsetPath = `path("${d}")`;
-}
-addEventListener("resize", fitSky); fitSky();
-// correct-answer toasts
-document.addEventListener("click", e=>{
-  const o = e.target.closest(".opt"); if(!o) return;
-  setTimeout(()=>{ if(o.classList.contains("right")) toast(["正解！","ナイス！","その通り！"][Math.floor(Math.random()*3)]); }, 0);
-});
 
-// principles
-document.querySelectorAll("#principles .chip").forEach(c=> c.onclick = ()=>{
-  document.querySelectorAll("#principles .chip").forEach(x=>x.setAttribute("aria-pressed","false"));
-  c.setAttribute("aria-pressed","true"); $("principleMsg").textContent = c.dataset.msg;
-});
-
-// profile hotspot
+/* ---------- step 4 ---------- */
 const HOT = {status:"そこは今のステータス（オンラインなど）です。もう一度探してみてください。",
              name:"そこはサーバーで表示される名前です。人と重なることもあります。",
              id:"正解！ 名前の下の英数字がDiscord IDです。最後にこれを入力します。"};
 document.querySelectorAll(".spot").forEach(s=> s.onclick = ()=>{
   document.querySelectorAll(".spot").forEach(x=>x.classList.remove("right","wrong"));
-  const ok = s.dataset.k==="id";
-  s.classList.add(ok?"right":"wrong");
-  $("hotMsg").textContent = HOT[s.dataset.k];
-  $("hotMsg").className = "feedback " + (ok?"ok":"ng");
-  if(ok){ state.hot = true; save(); }
+  const ok = s.dataset.k==="id"; s.classList.add(ok ? "right" : "wrong");
+  $("hotMsg").textContent = HOT[s.dataset.k]; $("hotMsg").className = "feedback " + (ok ? "ok" : "ng");
+  if(ok){ if(!state.hot){ Sound.correct(); burst(.5, originOf(s)); } state.hot = true; save(); } else Sound.wrong();
   render();
 });
-if(state.hot){ document.querySelector('.spot[data-k="id"]').classList.add("right"); $("hotMsg").textContent = HOT.id; $("hotMsg").className="feedback ok"; }
-
-// rules
-["r1","r2","r3","r4","r5"].forEach(id=>{
-  const el = $(id); el.checked = state.rules.includes(id);
-  el.onchange = ()=>{ state.rules = state.rules.filter(r=>r!==id); if(el.checked) state.rules.push(id); save(); render(); };
+if(state.hot){ document.querySelector('.spot[data-k="id"]').classList.add("right"); $("hotMsg").textContent = HOT.id; $("hotMsg").className = "feedback ok"; }
+function setCampus(v){
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===v)));
+  document.querySelectorAll(".compare figure").forEach(f=> f.hidden = f.dataset.v!==v);
+  if(v==="after"){ state.campus = true; save(); $("campusMsg").textContent = "交流しよう・学習相談のカテゴリが増えて、仲間やメンターとより多く関われるようになります。"; }
+}
+document.querySelectorAll(".seg button").forEach(b=> b.onclick = ()=>{ setCampus(b.dataset.v); Sound.pop(); });
+const TYPES_CH = ["# テキスト","💬 フォーラム","🔊 ボイス"];
+SORT.forEach((item,k)=>{
+  const box = document.createElement("div"); box.className = "sortq";
+  box.innerHTML = `<b></b><div class="opts"></div><p class="explain" hidden></p>`;
+  box.querySelector("b").textContent = `${k+1}. ${item.q}`;
+  const opts = box.querySelector(".opts"), ex = box.querySelector(".explain");
+  const mark = (j, fresh)=>{
+    opts.querySelectorAll(".opt").forEach((x,y)=>{ x.classList.remove("right","wrong"); if(y===j) x.classList.add(j===item.a ? "right" : "wrong"); });
+    ex.hidden = false; ex.textContent = j===item.a ? "正解！ " + item.e : "ちがいます。もう一度選んでみてください。";
+    if(fresh){ if(j===item.a){ Sound.correct(); burst(.35, originOf(opts)); } else Sound.wrong(); }
+  };
+  TYPES_CH.forEach((t,j)=>{ const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = t;
+    b.onclick = ()=>{ state.sort[k] = j; save(); mark(j, true); render(); }; opts.appendChild(b); });
+  if(state.sort[k]!=null) mark(state.sort[k], false);
+  $("sort").appendChild(box);
 });
 
-// intro maker
+/* ---------- step 5: chat simulator ---------- */
+const BOT = MENTORS[1];
+function chatMsg({who, av, text, bot, mine}){
+  const m = document.createElement("div"); m.className = "msg";
+  m.innerHTML = `<span class="av"></span><div><div class="who"><span class="n"></span>${bot ? '<span class="bot">メンター</span>' : ""}<time>今日</time></div><div class="txt"></div></div>`;
+  const avEl = m.querySelector(".av");
+  if(av){ const img = document.createElement("img"); img.src = av; img.alt = ""; avEl.appendChild(img); }
+  else { avEl.textContent = [...(who||"?")][0]; avEl.style.background = "linear-gradient(135deg,#187496,#FF914D)"; }
+  m.querySelector(".n").textContent = who; m.querySelector(".txt").textContent = text;
+  if(mine) m.querySelector(".who").style.color = "#30BFC5";
+  $("chatLog").appendChild(m); return m;
+}
+function typingBubble(){
+  const m = document.createElement("div"); m.className = "msg";
+  m.innerHTML = `<span class="av"><img alt="" src="${BOT.photo}"></span><div><div class="who">${BOT.name} が入力中…</div><div class="typing"><i></i><i></i><i></i></div></div>`;
+  $("chatLog").appendChild(m); return m;
+}
+const me = ()=> state.nick || "あなた";
+function resetChat(){ $("chatLog").innerHTML = ""; $("chatChannel").textContent = "送り先を選んでね"; $("chatCompose").hidden = false; }
+function chatDone(){
+  $("chatLog").innerHTML = ""; $("chatChannel").textContent = "地域別相談室 › オーストラリア"; $("chatCompose").hidden = true;
+  chatMsg({who: me(), text: $("chatDraft").textContent, mine:true});
+  const r = chatMsg({who: BOT.name, av: BOT.photo, text: "質問ありがとう！✨ シドニーの寮は国際色豊かで…（続きはDiscordで！）", bot:true});
+  r.querySelector(".txt").insertAdjacentHTML("afterend", `<div class="reacts"><span class="react">💖 3</span><span class="react">🎉 2</span></div>`);
+}
+document.querySelectorAll(".chat-choices button").forEach(b=> b.onclick = ()=>{
+  const to = b.dataset.to; $("chatCompose").hidden = true; $("chatLog").innerHTML = "";
+  if(to==="dm"){
+    $("chatChannel").textContent = `ダイレクトメッセージ › ${BOT.name}`;
+    chatMsg({who: me(), text: $("chatDraft").textContent, mine:true}); Sound.pop();
+    const t = typingBubble();
+    setTimeout(()=>{ t.remove(); chatMsg({who: BOT.name, av: BOT.photo, text: "DMありがとう！でもこの質問は #地域別相談室 で聞いてみて🙌 みんなが見えるところだと、同じ疑問の人の役にも立つよ！", bot:true}); Sound.wrong();
+      setTimeout(()=>{ $("chatCompose").hidden = false; toast("もう一度、送り先を選んでみよう"); }, 900); }, 1200);
+  } else {
+    $("chatChannel").textContent = "地域別相談室 › オーストラリア";
+    chatMsg({who: me(), text: $("chatDraft").textContent, mine:true}); Sound.pop();
+    const t = typingBubble();
+    setTimeout(()=>{ t.remove();
+      const r = chatMsg({who: BOT.name, av: BOT.photo, text: "質問ありがとう！✨ シドニーの寮は国際色豊かで…（続きはDiscordで！）", bot:true});
+      Sound.correct();
+      setTimeout(()=>{ r.querySelector(".txt").insertAdjacentHTML("afterend", `<div class="reacts"><span class="react">💖 3</span><span class="react" style="animation-delay:.15s">🎉 2</span></div>`);
+        flyEmojis(r, ["💖","🎉","✨"]); Sound.sparkle(); burst(.5, originOf(r));
+        state.chat = true; save(); render(); }, 450);
+    }, 1300);
+  }
+});
+if(state.chat) chatDone(); else resetChat();
+
+/* ---------- step 5: rules + intro ---------- */
+["r1","r2","r3","r4","r5"].forEach(id=>{
+  const el = $(id); el.checked = state.rules.includes(id);
+  el.onchange = ()=>{ state.rules = state.rules.filter(r=>r!==id); if(el.checked){ state.rules.push(id); Sound.pop(); } save(); render(); };
+});
 const IF = ["i-name","i-grade","i-country","i-status","i-field","i-msg"];
 function introText(){
   const v = id => ($(id).value||"").trim();
   return `【お名前、ニックネーム】${v("i-name")}\n【学年】${v("i-grade")}\n【どんな国行ってみたい？】${v("i-country")}\n【留学のステータス】${v("i-status")}\n【興味あるプログラムや専攻】${v("i-field")}\n【意気込み】${v("i-msg")}`;
 }
+let typingTimer;
+function updateIntro(){
+  $("introOut").textContent = introText();
+  const n = ($("i-name").value || state.nick || "").trim();
+  $("introAv").textContent = n ? [...n][0] : "?"; $("introWho").textContent = n || "あなた";
+}
 IF.forEach(id=>{
   if(state.intro[id]!=null) $(id).value = state.intro[id];
-  $(id).addEventListener("input", ()=>{ state.intro[id] = $(id).value; save(); $("introOut").textContent = introText(); updateAvatar(); typing(); });
+  $(id).addEventListener("input", ()=>{ state.intro[id] = $(id).value; save(); updateIntro();
+    const d = document.querySelector(".dmsg"); d.classList.add("typing"); clearTimeout(typingTimer); typingTimer = setTimeout(()=>d.classList.remove("typing"), 900); });
 });
 if(!state.intro["i-name"] && state.nick) $("i-name").value = state.nick;
-$("introOut").textContent = introText(); updateAvatar();
+if(!state.intro["i-field"] && state.fields.length) $("i-field").value = state.fields.filter(x=>x!==UNDECIDED).join("、");
+updateIntro();
 $("copyIntro").onclick = ()=>{
   const t = introText();
-  const done = ()=>{ $("copyMsg").textContent = "コピーしました"; toast("コピーしました！ Discordに貼り付けてね"); };
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(t).then(done, selectOut);
-  } else selectOut();
-  function selectOut(){ const r = document.createRange(); r.selectNodeContents($("introOut")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("copyMsg").textContent = "選択しました。長押しかCtrl+Cでコピーしてください"; }
+  const ok = ()=>{ toast("コピーしました！ Discordに貼り付けてね"); Sound.correct(); };
+  const fallback = ()=>{ const r = document.createRange(); r.selectNodeContents($("introOut")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("選択しました。長押しでコピーしてください"); };
+  if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, fallback); else fallback();
 };
 
-// quiz
-const quizEl = $("quiz");
+/* ---------- step 6: quiz ---------- */
 QUIZ.forEach((item,k)=>{
-  const box = document.createElement("div"); box.className = "card q";
-  box.innerHTML = `<h3>Q${k+1}. ${item.q}</h3><div class="opts"></div><p class="explain" hidden></p>`;
+  const box = document.createElement("div"); box.className = "card";
+  box.innerHTML = `<h3></h3><div style="display:grid;gap:8px" class="opts"></div><p class="explain" hidden></p>`;
+  box.querySelector("h3").textContent = `Q${k+1}. ${item.q}`;
   const opts = box.querySelector(".opts"), ex = box.querySelector(".explain");
-  item.o.forEach((o,j)=>{
-    const b = document.createElement("button"); b.type="button"; b.className="opt"; b.textContent=o;
-    b.onclick = ()=>{
-      opts.querySelectorAll(".opt").forEach(x=>x.classList.remove("right","wrong"));
-      const ok = j===item.a; b.classList.add(ok?"right":"wrong");
-      ex.hidden = false; ex.textContent = (ok?"正解！ ":"ちがいます。もう一度選んでみてください。 ") + (ok?item.e:"");
-      state.quiz[k] = j; save(); score(); render();
-    };
-    opts.appendChild(b);
-    if(state.quiz[k]===j){ b.classList.add(j===item.a?"right":"wrong"); ex.hidden=false; ex.textContent = j===item.a ? "正解！ "+item.e : "ちがいます。もう一度選んでみてください。"; }
-  });
-  quizEl.appendChild(box);
+  const mark = (j, fresh)=>{
+    opts.querySelectorAll(".opt").forEach((x,y)=>{ x.classList.remove("right","wrong"); if(y===j) x.classList.add(j===item.a ? "right" : "wrong"); });
+    ex.hidden = false; ex.textContent = j===item.a ? "正解！ " + item.e : "ちがいます。もう一度選んでみてください。";
+    if(fresh){ if(j===item.a){ Sound.correct(); burst(.5, originOf(opts.children[j])); toast(["正解！","ナイス！","その通り！"][k%3]); } else Sound.wrong(); }
+  };
+  item.o.forEach((o,j)=>{ const b = document.createElement("button"); b.type = "button"; b.className = "opt"; b.textContent = o;
+    b.onclick = ()=>{ state.quiz[k] = j; save(); mark(j, true); render(); }; opts.appendChild(b); });
+  if(state.quiz[k]!=null) mark(state.quiz[k], false);
+  $("quiz").appendChild(box);
 });
-function score(){ const ok = QUIZ.filter((q,k)=>state.quiz[k]===q.a).length; $("score").textContent = ok===QUIZ.length ? "全問正解！ 次はDiscord IDを送りましょう。" : ""; }
-score();
 
-// submit
+/* ---------- step 7: submit to Google Form ---------- */
 $("submitForm").addEventListener("submit", async e=>{
   e.preventDefault();
-  const id = $("discordId").value.trim().replace(/^@/,"").toLowerCase();
-  const msg = $("formMsg");
+  const id = $("discordId").value.trim().replace(/^@/,"").toLowerCase(), msg = $("formMsg");
   if(!/^[a-z0-9._]{2,32}$/.test(id)){
     msg.textContent = "Discord IDは2〜32文字の半角英小文字・数字・ピリオド・アンダースコアです。表示名ではなく、その下の英数字を入力してください。";
-    $("discordId").focus(); return;
+    Sound.wrong(); $("discordId").focus(); return;
   }
-  msg.textContent = "";
-  $("sendBtn").disabled = true; $("sendBtn").textContent = "送信中…";
-  if(FORM.action && FORM.discordId){
-    const fd = new FormData();
-    fd.append(FORM.discordId, id);
-    if(FORM.displayName) fd.append(FORM.displayName, $("displayName").value.trim());
-    if(FORM.nickname) fd.append(FORM.nickname, state.nick);
-    try{ await fetch(FORM.action, {method:"POST", mode:"no-cors", body:fd}); }
-    catch(err){
-      msg.textContent = "送信できませんでした。通信状況を確認して、もう一度送信してください。";
-      $("sendBtn").disabled = false; $("sendBtn").textContent = "送信する"; return;
-    }
+  msg.textContent = ""; const btn = $("sendBtn"); btn.disabled = true; btn.textContent = "送信中…";
+  const f = CONFIG.form;
+  if(f.action && f.discordId){
+    const fd = new FormData(); fd.append(f.discordId, id);
+    if(f.displayName) fd.append(f.displayName, $("displayName").value.trim());
+    if(f.nickname) fd.append(f.nickname, state.nick);
+    try{ await fetch(f.action, {method:"POST", mode:"no-cors", body:fd}); }
+    catch(err){ msg.textContent = "送信できませんでした。通信状況を確認して、もう一度送信してください。"; btn.disabled = false; btn.innerHTML = '<i data-lucide="send"></i>送信して搭乗する'; icons(); return; }
   }
-  state.sent = {id, at:new Date().toISOString()}; state.step = 8; save(); render(); window.scrollTo({top:0}); confetti();
-  $("sendBtn").disabled = false; $("sendBtn").textContent = "送信する";
+  state.sent = {id, at:new Date().toISOString()}; state.step = 8; save(); render(); scrollTo({top:0});
+  btn.disabled = false; btn.innerHTML = '<i data-lucide="send"></i>送信して搭乗する'; icons();
+  setTimeout(()=>{ Sound.stamp(); }, 1250); setTimeout(()=>{ Sound.cheer(); bigCelebrate(); }, 1350);
 });
 
-render();
-</script>
+/* ---------- step 8: passport ---------- */
+function renderDone(){
+  $("doneLead").textContent = (state.nick ? state.nick + "さん、" : "") + "ご参加ありがとうございました。";
+  $("ppName").textContent = state.nick || "部員";
+  $("ppId").textContent = state.sent ? state.sent.id : "-";
+  $("ppDest").textContent = state.regions.join("・") || "-";
+  $("ppType").textContent = state.type || "-";
+  renderStamps($("ppStamps"));
+  $("matchDone").hidden = !matchMentors().length; if(matchMentors().length) renderMatches("matchesDone");
+  const regs = state.regions.filter(r=>r!==UNDECIDED);
+  const items = [
+    ["「自己紹介（部員）」に投稿", "GATE 05で作った自己紹介文を貼り付けましょう。"],
+    ["「地域別相談室」をのぞく", regs.length ? `${regs.join("・")}についての投稿を探して、気になる質問にリアクションしてみましょう。` : "いろいろな国の投稿を見て、行ってみたい地域を探してみましょう。"],
+    ["「海外大生の日常」を見る", "メンターたちの留学生活をのぞいて、気になったら返信してみましょう。"]
+  ];
+  $("nextSteps").innerHTML = "";
+  items.forEach(([t,d],k)=>{ const li = document.createElement("li");
+    li.innerHTML = `<span class="n">${k+1}</span><span><b></b><br><span class="lead"></span></span>`;
+    li.querySelector("b").textContent = t; li.querySelector(".lead").textContent = d; $("nextSteps").appendChild(li); });
+}
+$("departBtn").onclick = ()=>{
+  Sound.cheer(); bigCelebrate(); flyEmojis($("departBtn"), ["✈️","🎉","🌏"]);
+  if(CONFIG.discordUrl) setTimeout(()=> location.href = CONFIG.discordUrl, 900);
+  else toast("運営が権限を付けたら、Discordで会おうね！");
+};
 
+/* ---------- lightbox ---------- */
+const lb = $("lightbox");
+document.querySelectorAll("figure img, .shots img").forEach(img=> img.addEventListener("click", ()=>{ lb.querySelector("img").src = img.src; lb.querySelector("img").alt = img.alt; lb.hidden = false; Sound.tick(); }));
+lb.addEventListener("click", ()=> lb.hidden = true);
+addEventListener("keydown", e=>{ if(e.key==="Escape") lb.hidden = true; });
+
+/* ---------- welcome plane path ---------- */
+function fitSky(){
+  const sky = document.querySelector(".sky"), pl = document.querySelector(".sky-plane"); if(!sky || !pl) return;
+  const w = sky.clientWidth, h = sky.clientHeight;
+  pl.style.offsetPath = `path("M-10 ${h*.36} C ${w*.25} ${h*.02}, ${w*.7} ${h*.02}, ${w+10} ${h*.30}")`;
+}
+addEventListener("resize", fitSky);
+
+/* ---------- boot ---------- */
+setMute(Sound.muted);
+icons();
+renderTicket();
+if(state.regions.length){ $("matchCard").hidden = false; renderMatches("matches", "matchNote"); }
+render();
+fitSky();
+</script>
 </body>
 </html>
