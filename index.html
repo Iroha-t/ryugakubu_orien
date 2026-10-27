@@ -97,6 +97,15 @@ details.card summary{cursor:pointer;font-weight:700;color:var(--navy);list-style
 details.card summary::-webkit-details-marker{display:none}
 details.card summary .ic{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:8px;background:var(--aqua);font-family:var(--font-display);flex:none}
 details.card[open] summary{margin-bottom:8px}
+.compare{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.compare>figure{display:grid;gap:8px;min-width:0;justify-items:start}
+.shots{display:flex;gap:8px;align-items:flex-start;min-width:0;flex-wrap:wrap;margin-block:8px}
+.shots img,img.shot{display:block;max-width:100%;height:auto;border-radius:8px;border:1px solid var(--line);background:#1e1f22}
+.compare .shots img:first-child{width:38%}.compare .shots img:last-child{width:calc(62% - 8px)}
+img.shot{margin-top:8px}
+.shots img.small{max-width:55%}
+.credit{font-size:.75rem;color:var(--muted)}
+.credit a{color:var(--sea)}
 /* rules */
 .rule{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;cursor:pointer}
 .rule input{width:22px;height:22px;margin-top:4px;accent-color:var(--sea)}
@@ -227,23 +236,26 @@ details.card[open] summary{margin-bottom:8px}
     <p>プロフィールには「サーバーで表示される名前」と「Discord ID」があります。Discord IDはInstagramのユーザーIDのようなもので、人によって重ならない英数字です。<b>下の画像で、Discord IDの部分をタップしてください。</b></p>
     <div class="hot" id="hot">
       <img src="img/profile.jpg" alt="Discordのプロフィール画面の例。アイコン、表示名 sara、その下に iz.sara.one_98902 と表示されている">
-      <button class="spot" data-k="status" aria-label="アイコン右下の緑の丸" style="left:24%;top:46%;width:9%;height:14%"></button>
-      <button class="spot" data-k="name" aria-label="太字の名前 sara" style="left:3%;top:68%;width:16%;height:12%"></button>
-      <button class="spot" data-k="id" aria-label="名前の下の英数字 iz.sara.one_98902" style="left:3%;top:82%;width:41%;height:12%"></button>
+      <button class="spot" data-k="status" aria-label="アイコン右下の緑の丸" style="left:23%;top:52%;width:9%;height:13%"></button>
+      <button class="spot" data-k="name" aria-label="太字の名前 sara" style="left:3%;top:75%;width:16%;height:10%"></button>
+      <button class="spot" data-k="id" aria-label="名前の下の英数字 iz.sara.one_98902" style="left:3%;top:87%;width:40%;height:10%"></button>
     </div>
     <p class="feedback" id="hotMsg" aria-live="polite"></p>
   </div>
-  <figure>
-    <img src="img/campus.jpg" alt="オリエンテーション前は数チャンネルしか見えず、後はたくさんのチャンネルが見えるようになる比較画像">
-    <figcaption>今見えているのは一部のチャンネルだけです。オリエンテーションが終わると、交流や相談のチャンネルがすべて見えるようになります。</figcaption>
-  </figure>
+  <div class="card" style="display:grid;gap:12px">
+    <h3>オリエンテーションが終わると、見えるチャンネルが増えます</h3>
+    <div class="compare">
+      <figure><span class="pill">今（オリエンテーション前）</span><div class="shots"><img src="img/campus-before-list.jpg" alt="ようこそ、一般、運営から、イベント告知、質問・お問い合わせなど数個のチャンネル"><img src="img/campus-before-post.jpg" alt="運営からのイベント告知の投稿"></div></figure>
+      <figure><span class="pill">オリエンテーション後</span><div class="shots"><img src="img/campus-after-list.jpg" alt="おしゃべり、運営より、海外大生の日常、通話募集、大学生グループ、雑談、作業ルームなど多くのチャンネル"><img src="img/campus-after-post.jpg" alt="シドニーのKotaさんによるサッカーのパブリックビューイングの投稿"></div></figure>
+    </div>
+    <p class="lead">交流や相談のチャンネルがすべて見えるようになり、仲間やメンターとより多く関われるようになります。</p>
+  </div>
   <div style="display:grid;gap:10px">
     <h3>3種類のチャンネル</h3>
-    <details class="card"><summary><span class="ic">#</span>テキストチャンネル</summary><p>メッセージでやりとりする場所です。お知らせやおしゃべり、自己紹介などに使います。@でメンションすると相手に通知が届きます。</p></details>
-    <details class="card"><summary><span class="ic">💬</span>フォーラムチャンネル</summary><p>テーマごとにスレッドを立てて質問・相談する場所です。たとえば「地域別相談室」には、アメリカ・アジア・ヨーロッパ・オーストラリアなど地域別のスレッドがあります。</p></details>
-    <details class="card"><summary><span class="ic">🔊</span>ボイスチャンネル</summary><p>入るだけでリアルタイムに音声通話や画面共有ができます。「雑談」や「作業ルーム」があります。</p></details>
+    <details class="card"><summary><span class="ic">#</span>テキストチャンネル</summary><p>メッセージでやりとりする場所です。お知らせやおしゃべり、自己紹介などに使います。@でメンションすると相手に通知が届きます。</p><img class="shot" src="img/ch-text.jpg" alt="Kotaさんが@部員などをメンションしてオフィスアワーを案内している投稿"></details>
+    <details class="card"><summary><span class="ic">💬</span>フォーラムチャンネル</summary><p>テーマごとにスレッドを立てて質問・相談する場所です。たとえば「地域別相談室」には、アメリカ・アジア・ヨーロッパ・オーストラリアなど地域別のスレッドがあります。</p><div class="shots"><img class="small" src="img/ch-forum-list.jpg" alt="地域別相談室のオーストラリアのスレッド"><img src="img/ch-forum-post.jpg" alt="シドニーの寮について質問している投稿"></div><p>「#奨学金」のように、テーマ別のテキストチャンネルで質問することもできます。</p><div class="shots"><img class="small" src="img/ch-scholar-name.jpg" alt="奨学金チャンネル"><img src="img/ch-scholar-post.jpg" alt="JASSOの奨学金について質問と回答のやりとり"></div></details>
+    <details class="card"><summary><span class="ic">🔊</span>ボイスチャンネル</summary><p>入るだけでリアルタイムに音声通話や画面共有ができます。「雑談」や「作業ルーム」があります。</p><div class="shots"><img class="small" src="img/ch-voice-list.jpg" alt="雑談と作業ルームのボイスチャンネル"><img src="img/ch-voice-call.jpg" alt="ボイスチャンネルで通話している画面の例"></div><p class="credit">通話画面の画像引用: <a href="https://automaton-media.com/articles/newsjp/20210401-156574/" target="_blank" rel="noopener">AUTOMATON</a></p></details>
   </div>
-  <figure><img src="img/channels.jpg" alt="テキスト・フォーラム・ボイスチャンネルの実際の画面例"><figcaption>実際の画面の例</figcaption></figure>
 </section>
 
 <!-- 5 -->
