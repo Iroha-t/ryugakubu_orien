@@ -7,7 +7,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <meta name="robots" content="noindex, nofollow, noimageindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Maru+Gothic:wght@500;700;900&family=Noto+Sans+JP:wght@400;500;700&display=swap">
 <style>
 /* Layout: one step per screen, a flight-route progress bar on top, a fixed action bar at the bottom. */
 :root{
@@ -145,6 +145,127 @@ img.shot{margin-top:8px}
 .notice{background:color-mix(in srgb,var(--sun) 18%,var(--card));border:1px solid var(--sun);border-radius:10px;padding:10px 14px;font-size:.9rem}
 @media (prefers-reduced-motion: reduce){*{transition:none!important}}
 </style>
+
+<style>
+/* ===== Visual layer: boarding / departure theme, friendly rounded type, motion ===== */
+:root{ --font-head:"Dela Gothic One","Zen Maru Gothic","Noto Sans JP",sans-serif; --ink:#0b3561; --sky1:#0b3561; --sky2:#13809e; --glow:color-mix(in srgb,var(--sea) 30%,transparent);}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--ink:#e4eef2; --sky1:#071725; --sky2:#0f5b70}}
+:root[data-theme="dark"]{--ink:#e4eef2; --sky1:#071725; --sky2:#0f5b70}
+body{background:
+  radial-gradient(60vmax 40vmax at 110% -10%, color-mix(in srgb,var(--sea) 14%,transparent), transparent 60%),
+  radial-gradient(50vmax 40vmax at -20% 110%, color-mix(in srgb,var(--sun) 12%,transparent), transparent 60%),
+  var(--bg); background-attachment:fixed}
+h1,h2{font-family:var(--font-head);font-weight:400;letter-spacing:.02em}
+h2{font-size:1.55rem}
+/* buttons */
+.btn.ghost{color:var(--sea)!important}
+.btn{transition:transform .15s ease, box-shadow .2s ease, filter .2s; box-shadow:0 6px 16px -6px var(--glow)}
+.btn:not(:disabled):hover{transform:translateY(-2px); box-shadow:0 10px 22px -8px var(--glow)}
+.btn:not(:disabled):active{transform:scale(.96)}
+#next:not(:disabled){background:linear-gradient(100deg,var(--sea),color-mix(in srgb,var(--sea) 70%,var(--sun)));background-size:200% 100%;animation:shine 3s ease-in-out infinite}
+#next.unlocked{animation:pop .5s cubic-bezier(.3,1.6,.5,1), shine 3s ease-in-out infinite}
+@keyframes shine{0%,100%{background-position:0 0}50%{background-position:100% 0}}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.15)}100%{transform:scale(1)}}
+.chip,.opt{transition:transform .15s, background .2s, border-color .2s}
+.chip:active,.opt:active{transform:scale(.96)}
+.opt.right{animation:pop .4s}
+.opt.wrong{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* header plane */
+.track .plane{transition:left .8s cubic-bezier(.6,0,.2,1)}
+.track .done{transition:width .8s cubic-bezier(.6,0,.2,1)}
+/* step enter + stagger */
+section.step:not([hidden])>*{animation:rise .55s cubic-bezier(.2,.8,.2,1) both; animation-delay:calc(var(--i,0) * 70ms)}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+/* step head */
+.stephead{display:flex;align-items:center;gap:14px}
+.stephead .num{font-family:var(--font-head);font-size:3.2rem;line-height:1;color:transparent;-webkit-text-stroke:2px var(--sea);flex:none}
+.stephead .eyebrow{margin:0 0 2px}
+/* welcome sky */
+.sky{position:relative;overflow:hidden;border-radius:24px;background:linear-gradient(160deg,var(--sky1),var(--sky2));color:#fff;padding:28px 20px 26px;min-height:340px;display:grid;align-items:end;isolation:isolate}
+.sky::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 15%,rgba(255,255,255,.18),transparent 40%);z-index:-1}
+.sky-route{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+.sky-route path{stroke:rgba(255,255,255,.45);stroke-width:1.5;stroke-dasharray:6 7;animation:dash 20s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-260}}
+.sky-plane{position:absolute;left:0;top:0;font-size:22px;color:#fff;offset-path:path("M-10 190 C 90 40, 300 40, 410 150");offset-rotate:auto;animation:fly 7s cubic-bezier(.45,0,.55,1) infinite;z-index:-1}
+@keyframes fly{0%{offset-distance:0%;opacity:0}8%{opacity:1}92%{opacity:1}100%{offset-distance:100%;opacity:0}}
+.tag{position:absolute;font:700 .62rem/1 var(--font-body);letter-spacing:.14em;color:#fff;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.3);padding:5px 8px;border-radius:999px;animation:bob 5s ease-in-out infinite;z-index:-1}
+.t1{left:6%;top:8%}.t2{right:6%;top:13%;animation-delay:-1s}.t3{right:16%;top:29%;animation-delay:-2s}.t4{left:38%;top:5%;animation-delay:-3s}.t5{left:10%;top:24%;animation-delay:-4s}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.sky-inner{display:grid;gap:10px;padding-top:140px}
+.sky-logo{width:72px;height:72px;animation:spin-in 1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes spin-in{from{transform:rotate(-180deg) scale(.3);opacity:0}to{transform:none;opacity:1}}
+.sky h1{color:#fff;font-size:2rem;line-height:1.3}
+.kicker{font-weight:700;letter-spacing:.3em;font-size:.72rem;color:var(--sun)}
+.sky p{color:rgba(255,255,255,.88)}
+.sky-meta{display:flex;flex-wrap:wrap;gap:8px}
+.sky-meta span{background:rgba(255,255,255,.16);border-radius:999px;padding:3px 12px;font-size:.82rem;font-weight:700}
+/* cards hover lift */
+.card{transition:transform .25s, box-shadow .25s}
+.card:hover{box-shadow:0 14px 30px -18px var(--glow)}
+/* person flip (step 1) */
+.flip:not(.flip3d)[aria-expanded="true"] .person img{animation:wobble .5s}
+@keyframes wobble{30%{transform:rotate(-8deg) scale(1.05)}60%{transform:rotate(6deg)}}
+.person img{transition:transform .3s}
+/* member map: gentle zoom-on-tap hint */
+figure img{cursor:zoom-in;transition:transform .3s}
+figure img:hover{transform:scale(1.01)}
+/* 3D flip cards (step 3) */
+.flip3d{position:relative;display:grid;padding:0;border:0;background:none;perspective:1000px;min-height:170px}
+.flip3d::after{display:none}
+.flip3d .face{grid-area:1/1;display:grid;gap:8px;align-content:center;padding:20px;border-radius:16px;backface-visibility:hidden;transition:transform .7s cubic-bezier(.3,1.3,.5,1);border:1.5px solid var(--line)}
+.flip3d .front{background:linear-gradient(135deg,var(--card),var(--aqua))}
+.flip3d .backface{background:var(--navy);color:var(--bg);transform:rotateY(180deg)}
+.flip3d .backface .back{display:block!important;color:var(--bg);font-size:.95rem}
+.flip3d[aria-expanded="true"] .front{transform:rotateY(-180deg)}
+.flip3d[aria-expanded="true"] .backface{transform:rotateY(0)}
+.flip3d .tap{font-size:.8rem;color:var(--sea);font-weight:700}
+/* count-up number */
+.big{display:inline-block;animation:pop .6s}
+/* timeline draw */
+section.step:not([hidden]) .timeline li{animation:rise .5s both;animation-delay:calc(300ms + var(--j,0) * 90ms)}
+/* hotspot pulse */
+.spot:not(.right):not(.wrong){animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 color-mix(in srgb,var(--sun) 55%,transparent)}50%{box-shadow:0 0 0 8px transparent}}
+/* before/after crossfade */
+.compare figure:not([hidden]){animation:fadein .45s ease both}
+@keyframes fadein{from{opacity:0;transform:scale(.98)}to{opacity:1;transform:none}}
+/* rules as tappable cards with stamp */
+.rule{border:1.5px solid var(--line);border-radius:14px;padding:12px;transition:border-color .2s, background .2s;position:relative}
+.rule:has(input:checked){border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--card))}
+.rule input{appearance:none;-webkit-appearance:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:grid;place-items:center;transition:all .2s;margin-top:2px;background:var(--card)}
+.rule input:checked{background:var(--ok);border-color:var(--ok)}
+.rule input:checked::after{content:"✓";color:var(--card);font-weight:900;font-size:15px;animation:pop .35s}
+/* discord-like preview */
+.dmsg{display:grid;grid-template-columns:42px 1fr;gap:12px;background:#313338;color:#dbdee1;border-radius:12px;padding:14px;min-width:0}
+.dmsg .av{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--sea),var(--sun));color:#fff;font-weight:900;font-size:1.1rem;transition:transform .3s}
+.dmsg .dbody{min-width:0}
+.dmsg .dhead{display:flex;gap:8px;align-items:baseline}
+.dmsg .dhead b{color:#f2f3f5}
+.dmsg time{font-size:.72rem;color:#949ba4}
+.dmsg .out{background:none;border:0;padding:4px 0 0;color:#dbdee1;font-size:.92rem}
+.dmsg.typing .out::after{content:"▍";animation:blink 1s steps(1) infinite;color:var(--sun)}
+@keyframes blink{50%{opacity:0}}
+/* toast */
+.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--navy);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;transition:all .3s cubic-bezier(.3,1.4,.5,1);z-index:30;max-width:calc(100% - 32px);text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+/* lightbox */
+.lightbox{position:fixed;inset:0;z-index:40;background:rgba(5,15,25,.88);display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px));animation:fadein .25s}
+.lightbox img{max-width:100%;max-height:85vh;border-radius:12px;cursor:zoom-out}
+.lb-close{position:absolute;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));width:44px;height:44px;border-radius:50%;border:0;background:rgba(255,255,255,.15);color:#fff;font-size:1.6rem}
+/* boarding pass + stamp */
+.pass{position:relative;box-shadow:0 20px 40px -24px var(--glow)}
+section.step:not([hidden]) .pass{animation:print 1s cubic-bezier(.2,.9,.2,1) both .2s}
+@keyframes print{from{clip-path:inset(0 0 100% 0);transform:translateY(-10px)}to{clip-path:inset(0 0 0 0);transform:none}}
+.stamp{position:absolute;right:70px;bottom:14px;font-family:var(--font-head);font-size:1.1rem;color:var(--ng);border:3px solid var(--ng);border-radius:8px;padding:2px 10px;transform:rotate(-12deg);opacity:0}
+section.step:not([hidden]) .stamp{animation:stamp .5s cubic-bezier(.3,1.8,.5,1) both 1.2s}
+@keyframes stamp{from{opacity:0;transform:rotate(-12deg) scale(2.4)}to{opacity:.85;transform:rotate(-12deg) scale(1)}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .stamp{opacity:.85}
+  .sky-plane{display:none}
+}
+</style>
 </head>
 <body>
 
@@ -162,11 +283,22 @@ img.shot{margin-top:8px}
 
 <!-- 0 -->
 <section class="step" data-name="ようこそ">
-  <div class="hero">
-    <img src="img/logo.png" alt="">
-    <h1>みんなの留学部へようこそ</h1>
-    <p class="lead">ミーティングに参加しなくても、このページで自分のペースでオリエンテーションを受けられます。</p>
-    <span class="pill">所要時間 約15分・全6ステップ</span>
+  <div class="sky">
+    <svg class="sky-route" viewBox="0 0 400 220" aria-hidden="true" preserveAspectRatio="none">
+      <path id="route" d="M-10 80 C 100 5, 280 5, 410 66" fill="none"/>
+    </svg>
+    <span class="sky-plane" aria-hidden="true">✈</span>
+    <span class="tag t1" aria-hidden="true">NEW YORK</span>
+    <span class="tag t2" aria-hidden="true">LONDON</span>
+    <span class="tag t3" aria-hidden="true">SYDNEY</span>
+    <span class="tag t4" aria-hidden="true">TORONTO</span>
+    <span class="tag t5" aria-hidden="true">SINGAPORE</span>
+    <div class="sky-inner">
+      <p class="kicker">WELCOME ABOARD</p>
+      <h1>みんなの留学部へ<br>ようこそ</h1>
+      <p>ミーティングに参加しなくても、自分のペースでオリエンテーションを受けられます。</p>
+      <div class="sky-meta"><span>約15分</span><span>全6ステップ</span><span>スマホOK</span></div>
+    </div>
   </div>
   <div class="card" style="display:grid;gap:12px">
     <h3>はじめに</h3>
@@ -191,7 +323,7 @@ img.shot{margin-top:8px}
 
 <!-- 1 -->
 <section class="step" data-name="メンバー紹介" hidden>
-  <div><p class="eyebrow">STEP 1</p><h2>運営メンバーを紹介します</h2></div>
+  <div class="stephead"><span class="num" aria-hidden="true">01</span><div><p class="eyebrow">GATE 01</p><h2>運営メンバーを紹介します</h2></div></div>
   <p class="lead">留学部は、海外の大学で学ぶ現役の留学生たちが運営しています。全体統括の2人をタップしてみてください。</p>
   <div class="grid2">
     <button class="flip" aria-expanded="false">
@@ -211,7 +343,7 @@ img.shot{margin-top:8px}
 
 <!-- 2 -->
 <section class="step" data-name="留学部とは" hidden>
-  <div><p class="eyebrow">STEP 2</p><h2>みんなの留学部とは</h2></div>
+  <div class="stephead"><span class="num" aria-hidden="true">02</span><div><p class="eyebrow">GATE 02</p><h2>みんなの留学部とは</h2></div></div>
   <div class="card" style="background:var(--aqua);border-color:transparent">
     <p style="font-family:var(--font-display);font-weight:700;color:var(--navy);font-size:1.1rem">挑戦を後押しする情報と機会を届け、等身大の想いに寄り添い、ロールモデルを示す伴走者である。</p>
   </div>
@@ -256,19 +388,19 @@ img.shot{margin-top:8px}
 
 <!-- 3 -->
 <section class="step" data-name="できること" hidden>
-  <div><p class="eyebrow">STEP 3</p><h2>コミュニティで何ができるの？</h2></div>
+  <div class="stephead"><span class="num" aria-hidden="true">03</span><div><p class="eyebrow">GATE 03</p><h2>コミュニティで何ができるの？</h2></div></div>
   <p class="lead">留学部が目指すのは「留学生による、留学生のための」データプラットフォームです。3枚のカードをめくってみてください。</p>
   <div style="display:grid;gap:12px">
-    <button class="flip" aria-expanded="false"><span class="part">PART 01</span><h3>現役海外大生とのオンラインネットワーク</h3><span class="back">調べても出てこない細かな悩みや疑問に、同じ道を歩む現役海外大生がオンラインで直接答えます。情報の一方通行をなくし、対話から生まれるリアルな学びを届けます。</span></button>
-    <button class="flip" aria-expanded="false"><span class="part">PART 02</span><h3>留学情報の一本化・可視化</h3><span class="back">留学を考えるときの判断材料、特に在学生の実体験に基づく声を一か所に集めます。海外大にまつわる情報がすべて見えるプラットフォームを作っています。</span></button>
-    <button class="flip" aria-expanded="false"><span class="part">PART 03</span><h3>「繋ぐ」機会の提供</h3><span class="back">イベントや学生サポートを通じて、学生と企業・教育機関、そして学生同士がつながる架け橋になります。</span></button>
+    <button class="flip flip3d" aria-expanded="false"><span class="face front"><span class="part">PART 01</span><h3>現役海外大生とのオンラインネットワーク</h3><span class="tap">タップしてめくる ↻</span></span><span class="face backface"><span class="part">PART 01</span><span class="back">調べても出てこない細かな悩みや疑問に、同じ道を歩む現役海外大生がオンラインで直接答えます。情報の一方通行をなくし、対話から生まれるリアルな学びを届けます。</span></span></button>
+    <button class="flip flip3d" aria-expanded="false"><span class="face front"><span class="part">PART 02</span><h3>留学情報の一本化・可視化</h3><span class="tap">タップしてめくる ↻</span></span><span class="face backface"><span class="part">PART 02</span><span class="back">留学を考えるときの判断材料、特に在学生の実体験に基づく声を一か所に集めます。海外大にまつわる情報がすべて見えるプラットフォームを作っています。</span></span></button>
+    <button class="flip flip3d" aria-expanded="false"><span class="face front"><span class="part">PART 03</span><h3>「繋ぐ」機会の提供</h3><span class="tap">タップしてめくる ↻</span></span><span class="face backface"><span class="part">PART 03</span><span class="back">イベントや学生サポートを通じて、学生と企業・教育機関、そして学生同士がつながる架け橋になります。</span></span></button>
   </div>
   <p class="hint" id="flipHint">あと3枚</p>
 </section>
 
 <!-- 4 -->
 <section class="step" data-name="Discordの使い方" hidden>
-  <div><p class="eyebrow">STEP 4</p><h2>Discordの使い方</h2></div>
+  <div class="stephead"><span class="num" aria-hidden="true">04</span><div><p class="eyebrow">GATE 04</p><h2>Discordの使い方</h2></div></div>
   <p>Discordは、個人やグループでテキスト・音声・ビデオ通話ができるアプリです。留学部の活動はここが中心です。</p>
   <div class="card" style="display:grid;gap:12px">
     <h3>プロフィールの見方</h3>
@@ -303,7 +435,7 @@ img.shot{margin-top:8px}
 
 <!-- 5 -->
 <section class="step" data-name="ルールとはじめの一歩" hidden>
-  <div><p class="eyebrow">STEP 5</p><h2>ルールとはじめの一歩</h2></div>
+  <div class="stephead"><span class="num" aria-hidden="true">05</span><div><p class="eyebrow">GATE 05</p><h2>ルールとはじめの一歩</h2></div></div>
   <p class="lead">みんなの悩みや質問をスピーディーに解決し、よりよいコミュニティにするための5つのルールです。読んだらチェックを入れてください。</p>
   <div class="card" style="display:grid;gap:14px" id="rules">
     <label class="rule"><input type="checkbox" id="r1"><span><b>留学に関する質問は、みんなが見えるチャンネルで</b><span>「一人の質問はみんなの質問」。#地域別相談室 や #奨学金 などで質問すると、ほかの部員も情報を得られて助け合えます。</span></span></label>
@@ -327,7 +459,10 @@ img.shot{margin-top:8px}
     </div>
     <label class="field" for="i-field">興味あるプログラムや専攻<input type="text" id="i-field" placeholder="例: 環境学、交換留学"></label>
     <label class="field" for="i-msg">意気込み<textarea id="i-msg" rows="2" placeholder="例: 奨学金について情報を集めたいです！よろしくお願いします！"></textarea></label>
-    <div class="out" id="introOut"></div>
+    <div class="dmsg" aria-label="Discordでの見え方のプレビュー">
+      <span class="av" id="introAv">?</span>
+      <div class="dbody"><p class="dhead"><b id="introWho">あなた</b><time>今日 21:00</time></p><div class="out" id="introOut"></div></div>
+    </div>
     <div><button class="btn ghost" id="copyIntro" type="button">コピーする</button> <span class="feedback ok" id="copyMsg"></span></div>
   </div>
 
@@ -343,7 +478,7 @@ img.shot{margin-top:8px}
 
 <!-- 6 -->
 <section class="step" data-name="確認クイズ" hidden>
-  <div><p class="eyebrow">STEP 6</p><h2>確認クイズ</h2></div>
+  <div class="stephead"><span class="num" aria-hidden="true">06</span><div><p class="eyebrow">GATE 06</p><h2>確認クイズ</h2></div></div>
   <p class="lead">こんなとき、どうする？ 全問正解でDiscord IDを送れるようになります。間違えても何度でも選び直せます。</p>
   <div id="quiz" style="display:grid;gap:14px"></div>
   <p class="score" id="score" aria-live="polite"></p>
@@ -351,7 +486,7 @@ img.shot{margin-top:8px}
 
 <!-- 7 -->
 <section class="step" data-name="Discord IDを送る" hidden>
-  <div><p class="eyebrow">最後のステップ</p><h2>Discord IDを送ろう</h2></div>
+  <div class="stephead"><span class="num" aria-hidden="true">GO</span><div><p class="eyebrow">FINAL GATE</p><h2>Discord IDを送ろう</h2></div></div>
   <p>運営がこのIDでDiscordを検索して、チャンネルの権限を付けます。表示名ではなく、プロフィールの名前の下にある英数字のIDを入力してください。</p>
   <form class="card" id="submitForm" style="display:grid;gap:14px" novalidate>
     <label class="field" for="discordId">Discord ID <small>例: iz.sara.one_98902（Discordアプリでアイコンをタップすると表示されます）</small>
@@ -383,6 +518,7 @@ img.shot{margin-top:8px}
       </dl>
     </div>
     <div class="stub">留学部</div>
+    <span class="stamp" aria-hidden="true">APPROVED</span>
   </div>
   <div class="card" style="display:grid;gap:12px">
     <h3>権限がついたら、まずここへ</h3>
@@ -401,6 +537,8 @@ img.shot{margin-top:8px}
 
 </main>
 
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="lightbox" id="lightbox" hidden><img alt=""><button type="button" class="lb-close" aria-label="閉じる">×</button></div>
 <div class="actionbar"><div class="wrap">
   <button class="btn ghost" id="back" type="button">戻る</button>
   <span class="hint" id="gateHint"></span>
@@ -433,6 +571,7 @@ function gate(i){
   return "";
 }
 
+let lastGate = {step:-1, locked:false};
 function render(){
   const i = state.step;
   steps.forEach((s,k)=> s.hidden = k!==i);
@@ -447,7 +586,10 @@ function render(){
   $("back").hidden = i===0 || i===8;
   const next = $("next");
   next.hidden = i>=7;
+  if(lastGate.step===i && lastGate.locked && !g){ next.classList.remove("unlocked"); void next.offsetWidth; next.classList.add("unlocked"); toast("次へ進めます！"); }
+  lastGate = {step:i, locked:!!g};
   next.disabled = !!g;
+  [...steps[i].children].forEach((c,k)=> c.style.setProperty("--i", k));
   next.textContent = i===0 ? "はじめる" : i===LAST_CONTENT ? "Discord IDを送る" : "次へ";
   if(i===7) $("previewNote").hidden = !!(FORM.action && FORM.discordId);
   if(i===8){
@@ -501,6 +643,7 @@ document.querySelectorAll(".guess").forEach(card=>{
   const show = j=>{
     opts.forEach((o,x)=>{ o.classList.remove("right","wrong"); if(x===a) o.classList.add("right"); else if(x===j) o.classList.add("wrong"); o.disabled = true; });
     rv.hidden = false;
+    countUp(rv.querySelector(".big"));
   };
   opts.forEach((o,j)=> o.onclick = ()=>{ state.guess[k]=j; save(); show(j); });
   if(state.guess[k]!=null) show(state.guess[k]);
@@ -579,6 +722,43 @@ function confetti(){
   })();
 }
 
+// ===== motion helpers =====
+const reduceMotion = ()=> matchMedia("(prefers-reduced-motion: reduce)").matches;
+let toastTimer;
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove("show"),1800); }
+function countUp(el){
+  if(!el || reduceMotion() || el.dataset.done) return; el.dataset.done = 1;
+  const txt = el.textContent, m = txt.match(/[\d.]+/); if(!m) return;
+  const target = parseFloat(m[0]), dec = (m[0].split(".")[1]||"").length, t0 = performance.now();
+  (function f(now){ const k = Math.min(1,(now-t0)/900), e = 1-Math.pow(1-k,3);
+    el.textContent = txt.replace(m[0], (target*e).toFixed(dec)); if(k<1) requestAnimationFrame(f); else el.textContent = txt; })(t0);
+}
+function updateAvatar(){
+  const n = ($("i-name").value||state.nick||"").trim();
+  $("introAv").textContent = n ? [...n][0] : "?"; $("introWho").textContent = n || "あなた";
+}
+let typingTimer;
+function typing(){ const d=document.querySelector(".dmsg"); d.classList.add("typing"); clearTimeout(typingTimer); typingTimer=setTimeout(()=>d.classList.remove("typing"),900); }
+document.querySelectorAll(".timeline li").forEach((li,j)=> li.style.setProperty("--j", j));
+// lightbox
+const lb = $("lightbox");
+document.querySelectorAll("figure img, .shots img").forEach(img=> img.addEventListener("click", ()=>{ lb.querySelector("img").src = img.src; lb.querySelector("img").alt = img.alt; lb.hidden = false; }));
+lb.addEventListener("click", ()=> lb.hidden = true);
+addEventListener("keydown", e=>{ if(e.key==="Escape") lb.hidden = true; });
+// plane path fitted to the welcome card
+function fitSky(){
+  const sky = document.querySelector(".sky"); if(!sky) return;
+  const w = sky.clientWidth, h = sky.clientHeight;
+  const d = `M-10 ${h*.36} C ${w*.25} ${h*.02}, ${w*.7} ${h*.02}, ${w+10} ${h*.30}`;
+  document.querySelector(".sky-plane").style.offsetPath = `path("${d}")`;
+}
+addEventListener("resize", fitSky); fitSky();
+// correct-answer toasts
+document.addEventListener("click", e=>{
+  const o = e.target.closest(".opt"); if(!o) return;
+  setTimeout(()=>{ if(o.classList.contains("right")) toast(["正解！","ナイス！","その通り！"][Math.floor(Math.random()*3)]); }, 0);
+});
+
 // principles
 document.querySelectorAll("#principles .chip").forEach(c=> c.onclick = ()=>{
   document.querySelectorAll("#principles .chip").forEach(x=>x.setAttribute("aria-pressed","false"));
@@ -614,13 +794,13 @@ function introText(){
 }
 IF.forEach(id=>{
   if(state.intro[id]!=null) $(id).value = state.intro[id];
-  $(id).addEventListener("input", ()=>{ state.intro[id] = $(id).value; save(); $("introOut").textContent = introText(); });
+  $(id).addEventListener("input", ()=>{ state.intro[id] = $(id).value; save(); $("introOut").textContent = introText(); updateAvatar(); typing(); });
 });
 if(!state.intro["i-name"] && state.nick) $("i-name").value = state.nick;
-$("introOut").textContent = introText();
+$("introOut").textContent = introText(); updateAvatar();
 $("copyIntro").onclick = ()=>{
   const t = introText();
-  const done = ()=> $("copyMsg").textContent = "コピーしました";
+  const done = ()=>{ $("copyMsg").textContent = "コピーしました"; toast("コピーしました！ Discordに貼り付けてね"); };
   if(navigator.clipboard && navigator.clipboard.writeText){
     navigator.clipboard.writeText(t).then(done, selectOut);
   } else selectOut();
