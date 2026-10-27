@@ -106,6 +106,20 @@ img.shot{margin-top:8px}
 .shots img.small{max-width:55%}
 .credit{font-size:.75rem;color:var(--muted)}
 .credit a{color:var(--sea)}
+/* guess / sort / toggle */
+.seg{display:inline-grid;grid-auto-flow:column;background:var(--aqua);border-radius:999px;padding:4px;gap:4px;justify-self:start}
+.seg button{border:0;background:transparent;color:var(--navy);border-radius:999px;padding:6px 14px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--card);box-shadow:0 1px 3px color-mix(in srgb,var(--navy) 25%,transparent)}
+.reveal{display:grid;gap:6px;border-left:3px solid var(--sea);padding-left:12px}
+.big{font-family:var(--font-display);font-weight:900;font-size:2rem;color:var(--sea);line-height:1.2;font-variant-numeric:tabular-nums}
+.sortq{display:grid;gap:8px;padding-block:12px;border-top:1px solid var(--line)}
+.sortq:first-of-type{border-top:0}
+.sortq .opts{display:flex;flex-wrap:wrap;gap:8px}
+.sortq .opt{flex:1 1 0;min-width:0;text-align:center;padding:10px 4px;white-space:nowrap;font-size:.9rem}
+.next-steps{display:grid;gap:10px;margin:0;padding:0;list-style:none}
+.next-steps li{display:grid;grid-template-columns:32px 1fr;gap:10px;align-items:start}
+.next-steps .n{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:var(--sea);color:var(--card);font-weight:700;font-size:.9rem}
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
 /* rules */
 .rule{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start;cursor:pointer}
 .rule input{width:22px;height:22px;margin-top:4px;accent-color:var(--sea)}
@@ -160,6 +174,18 @@ img.shot{margin-top:8px}
     <label class="field" for="nick">ニックネーム <small>このページの中で呼びかけに使うだけです</small>
       <input type="text" id="nick" maxlength="20" placeholder="例: はると" autocomplete="nickname">
     </label>
+    <div class="field" style="display:grid;gap:8px">
+      <span>行ってみたい地域は？ <small style="font-weight:400;color:var(--muted)">いくつでも。最後におすすめのチャンネルを案内します</small></span>
+      <div class="choices" id="regions">
+        <button type="button" class="chip" aria-pressed="false">アメリカ</button>
+        <button type="button" class="chip" aria-pressed="false">カナダ</button>
+        <button type="button" class="chip" aria-pressed="false">イギリス</button>
+        <button type="button" class="chip" aria-pressed="false">ヨーロッパ</button>
+        <button type="button" class="chip" aria-pressed="false">オーストラリア</button>
+        <button type="button" class="chip" aria-pressed="false">アジア</button>
+        <button type="button" class="chip" aria-pressed="false">まだ決めていない</button>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -198,9 +224,22 @@ img.shot{margin-top:8px}
     </div>
     <p class="feedback ok" id="principleMsg" style="margin-top:8px;font-weight:500"></p>
   </div>
+  <div>
+    <h3>活動の2つの柱 <small style="font-weight:400;color:var(--muted)">数字を当ててみてください</small></h3>
+  </div>
   <div class="grid2">
-    <div class="card"><h3>メディア運営</h3><p>海外大生のリアルな情報を発信。YouTube登録者2.5万人、総再生回数約200万回、Webメディアの総PV数20万回超。</p></div>
-    <div class="card"><h3>コミュニティ運営</h3><p>進学を目指す人の支援と、現役留学生の挑戦の幅を広げる2つのコミュニティを運営。2025年夏には延べ500人が参加するイベントを開催。</p></div>
+    <div class="card guess" data-k="yt" data-a="1" style="display:grid;gap:10px">
+      <p class="eyebrow">メディア運営</p>
+      <h3>留学部のYouTubeチャンネル、登録者は何人？</h3>
+      <div class="opts" style="display:grid;gap:8px"><button type="button" class="opt">約2,500人</button><button type="button" class="opt">約2.5万人</button><button type="button" class="opt">約25万人</button></div>
+      <div class="reveal" hidden><span class="big">2.5万人</span><p>総再生回数は約200万回、Webメディアの総PV数は20万回超。海外大生のリアルな情報を発信して、支援の輪を広げています。</p></div>
+    </div>
+    <div class="card guess" data-k="ev" data-a="2" style="display:grid;gap:10px">
+      <p class="eyebrow">コミュニティ運営</p>
+      <h3>2025年夏の海外大生コミュニティのイベント、参加者は延べ何人？</h3>
+      <div class="opts" style="display:grid;gap:8px"><button type="button" class="opt">約50人</button><button type="button" class="opt">約150人</button><button type="button" class="opt">約500人</button></div>
+      <div class="reveal" hidden><span class="big">500人</span><p>進学を目指す人の支援と、現役留学生の挑戦の幅を広げる2つのコミュニティを運営しています。留学生と起業家が出会う場も作っています。</p></div>
+    </div>
   </div>
   <div class="card">
     <h3>これまでの活動</h3>
@@ -244,14 +283,18 @@ img.shot{margin-top:8px}
   </div>
   <div class="card" style="display:grid;gap:12px">
     <h3>オリエンテーションが終わると、見えるチャンネルが増えます</h3>
+    <div class="seg" role="group" aria-label="表示を切り替え"><button type="button" data-v="before" aria-pressed="true">今</button><button type="button" data-v="after" aria-pressed="false">オリエンテーション後</button></div>
     <div class="compare">
-      <figure><span class="pill">今（オリエンテーション前）</span><div class="shots"><img src="img/campus-before-list.jpg" alt="ようこそカテゴリの一般、オリエンテーション日程、運営からのお知らせ、イベント告知、メディア更新のお知らせ、質問・お問い合わせチャンネル、ようこそ"><img src="img/campus-before-post.jpg" alt="運営からの10月のイベント告知の投稿"></div></figure>
-      <figure><span class="pill">オリエンテーション後</span><div class="shots"><img src="img/campus-after-list.jpg" alt="交流しようカテゴリのおしゃべり、運営より、海外大生の日常、ローカルニュース、通話募集、スモールイベント、大学生グループ、雑談、作業ルームと、学習相談カテゴリの地域別相談室、英語学習、奨学金"><img src="img/campus-after-post.jpg" alt="カナダのアルバイト事情の質問に、現地の留学生が返信しているやりとり"></div></figure>
+      <figure data-v="before"><span class="pill">今（オリエンテーション前）</span><div class="shots"><img src="img/campus-before-list.jpg" alt="ようこそカテゴリの一般、オリエンテーション日程、運営からのお知らせ、イベント告知、メディア更新のお知らせ、質問・お問い合わせチャンネル、ようこそ"><img src="img/campus-before-post.jpg" alt="運営からの10月のイベント告知の投稿"></div></figure>
+      <figure data-v="after" hidden><span class="pill">オリエンテーション後</span><div class="shots"><img src="img/campus-after-list.jpg" alt="交流しようカテゴリのおしゃべり、運営より、海外大生の日常、ローカルニュース、通話募集、スモールイベント、大学生グループ、雑談、作業ルームと、学習相談カテゴリの地域別相談室、英語学習、奨学金"><img src="img/campus-after-post.jpg" alt="カナダのアルバイト事情の質問に、現地の留学生が返信しているやりとり"></div></figure>
     </div>
-    <p class="lead">交流や相談のチャンネルがすべて見えるようになり、仲間やメンターとより多く関われるようになります。</p>
+    <p class="lead" id="campusMsg">「オリエンテーション後」を押して、見えるチャンネルの違いを比べてみてください。</p>
   </div>
   <div style="display:grid;gap:10px">
     <h3>3種類のチャンネル</h3>
+    <div class="card" id="sort">
+      <p><b>こんなとき、どのチャンネルを使う？</b> 下の説明を開いて確かめながら選んでみてください。</p>
+    </div>
     <details class="card"><summary><span class="ic">#</span>テキストチャンネル</summary><p>メッセージでやりとりする場所です。お知らせやおしゃべり、自己紹介などに使います。@でメンションすると相手に通知が届きます。</p></details>
     <details class="card"><summary><span class="ic">💬</span>フォーラムチャンネル</summary><p>テーマごとにスレッドを立てて質問・相談する場所です。たとえば「地域別相談室」には、アメリカ・アジア・ヨーロッパ・オーストラリアなど地域別のスレッドがあります。</p><p>「#奨学金」のように、テーマ別のテキストチャンネルで質問することもできます。</p></details>
     <details class="card"><summary><span class="ic">🔊</span>ボイスチャンネル</summary><p>入るだけでリアルタイムに音声通話や画面共有ができます。「雑談」や「作業ルーム」があります。</p></details>
@@ -341,6 +384,10 @@ img.shot{margin-top:8px}
     </div>
     <div class="stub">留学部</div>
   </div>
+  <div class="card" style="display:grid;gap:12px">
+    <h3>権限がついたら、まずここへ</h3>
+    <ol class="next-steps" id="nextSteps"></ol>
+  </div>
   <div class="card" style="display:grid;gap:8px">
     <h3>このあとの流れ</h3>
     <ol style="margin:0;padding-left:1.3em">
@@ -367,7 +414,7 @@ const store = {
   get(){ try{ return JSON.parse(localStorage.getItem("ryugakubu-orientation")||"{}"); }catch(e){ return {}; } },
   set(v){ try{ localStorage.setItem("ryugakubu-orientation", JSON.stringify(v)); }catch(e){} }
 };
-const state = Object.assign({step:0, nick:"", hot:false, flips:[], quiz:{}, rules:[], intro:{}, sent:null}, store.get());
+const state = Object.assign({step:0, nick:"", regions:[], hot:false, flips:[], guess:{}, campus:false, sort:{}, quiz:{}, rules:[], intro:{}, sent:null}, store.get());
 const save = () => store.set(state);
 
 const steps = [...document.querySelectorAll("section.step")];
@@ -376,7 +423,11 @@ const $ = id => document.getElementById(id);
 
 function gate(i){
   if(i===3){ const n = 3 - state.flips.length; return n>0 ? `あと${n}枚めくってください` : ""; }
-  if(i===4) return state.hot ? "" : "Discord IDの場所をタップしてください";
+  if(i===4){
+    if(!state.hot) return "Discord IDの場所をタップしてください";
+    const n = SORT.filter((q,k)=>state.sort[k]===q.a).length;
+    return n<SORT.length ? `チャンネル問題 ${n} / ${SORT.length}` : "";
+  }
   if(i===5){ const n = 5 - state.rules.length; return n>0 ? `ルールにあと${n}つチェック` : ""; }
   if(i===6){ const ok = QUIZ.filter((q,k)=>state.quiz[k]===q.a).length; return ok<QUIZ.length ? `${ok} / ${QUIZ.length} 問正解` : ""; }
   return "";
@@ -403,6 +454,7 @@ function render(){
     $("passName").textContent = state.nick || "部員";
     $("passId").textContent = state.sent ? state.sent.id : "-";
     $("doneLead").textContent = (state.nick ? state.nick+"さん、" : "") + "ご参加ありがとうございました。";
+    renderNext();
   }
 }
 function go(d){ state.step = Math.max(0, Math.min(8, state.step+d)); save(); render(); window.scrollTo({top:0}); }
@@ -426,6 +478,106 @@ document.querySelectorAll(".flip").forEach((b,k)=>{
   };
 });
 $("flipHint").textContent = 3-state.flips.length>0 ? `あと${3-state.flips.length}枚` : "全部読みました";
+
+// regions (step 0)
+document.querySelectorAll("#regions .chip").forEach(c=>{
+  const r = c.textContent;
+  c.setAttribute("aria-pressed", String(state.regions.includes(r)));
+  c.onclick = ()=>{
+    const undecided = "まだ決めていない";
+    let list = state.regions.filter(x=>x!==r);
+    if(!state.regions.includes(r)) list = r===undecided ? [undecided] : list.filter(x=>x!==undecided).concat(r);
+    state.regions = list; save();
+    document.querySelectorAll("#regions .chip").forEach(x=>x.setAttribute("aria-pressed", String(list.includes(x.textContent))));
+    const iC = $("i-country");
+    if(iC && !state.intro["i-country"]){ iC.value = list.filter(x=>x!==undecided).join("、"); $("introOut").textContent = introText(); }
+  };
+});
+
+// number guessing (step 2)
+document.querySelectorAll(".guess").forEach(card=>{
+  const k = card.dataset.k, a = Number(card.dataset.a);
+  const opts = [...card.querySelectorAll(".opt")], rv = card.querySelector(".reveal");
+  const show = j=>{
+    opts.forEach((o,x)=>{ o.classList.remove("right","wrong"); if(x===a) o.classList.add("right"); else if(x===j) o.classList.add("wrong"); o.disabled = true; });
+    rv.hidden = false;
+  };
+  opts.forEach((o,j)=> o.onclick = ()=>{ state.guess[k]=j; save(); show(j); });
+  if(state.guess[k]!=null) show(state.guess[k]);
+});
+
+// before / after toggle (step 4)
+function setCampus(v){
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.v===v)));
+  document.querySelectorAll(".compare figure").forEach(f=> f.hidden = f.dataset.v!==v);
+  if(v==="after"){ state.campus = true; save();
+    $("campusMsg").textContent = "交流しよう・学習相談のカテゴリが増えて、仲間やメンターとより多く関われるようになります。"; }
+}
+document.querySelectorAll(".seg button").forEach(b=> b.onclick = ()=> setCampus(b.dataset.v));
+
+// channel sorting game (step 4)
+const SORT = [
+  {q:"オーストラリアの大学について質問して、答えをあとから見返せるように残したい", a:1,
+   e:"フォーラムチャンネル。地域別相談室にはテーマごとのスレッドがあり、やりとりがまとまって残ります。"},
+  {q:"作業しながら、ほかの部員と声でゆるく話したい", a:2,
+   e:"ボイスチャンネル。「作業ルーム」や「雑談」に入るだけで通話できます。"},
+  {q:"留学先での日常の写真をみんなにシェアしたい", a:0,
+   e:"テキストチャンネル。「海外大生の日常」などに投稿して、リアクションや返信で交流します。"}
+];
+const TYPES = ["# テキスト","💬 フォーラム","🔊 ボイス"];
+SORT.forEach((item,k)=>{
+  const box = document.createElement("div"); box.className = "sortq";
+  box.innerHTML = `<b>${k+1}. ${item.q}</b><div class="opts"></div><p class="explain" hidden></p>`;
+  const opts = box.querySelector(".opts"), ex = box.querySelector(".explain");
+  const mark = j=>{
+    opts.querySelectorAll(".opt").forEach((x,y)=>{ x.classList.remove("right","wrong"); if(y===j) x.classList.add(j===item.a?"right":"wrong"); });
+    ex.hidden = false; ex.textContent = j===item.a ? "正解！ "+item.e : "ちがいます。もう一度選んでみてください。";
+  };
+  TYPES.forEach((t,j)=>{
+    const b = document.createElement("button"); b.type="button"; b.className="opt"; b.textContent=t;
+    b.onclick = ()=>{ state.sort[k]=j; save(); mark(j); render(); };
+    opts.appendChild(b);
+  });
+  if(state.sort[k]!=null) mark(state.sort[k]);
+  $("sort").appendChild(box);
+});
+
+// done page: personalised next steps
+function renderNext(){
+  const regs = state.regions.filter(r=>r!=="まだ決めていない");
+  const items = [
+    ["「自己紹介（部員）」に投稿", "STEP 5で作った自己紹介文を貼り付けましょう。"],
+    regs.length
+      ? ["「地域別相談室」をのぞく", `${regs.join("・")}についての投稿を探して、気になる質問にリアクションしてみましょう。`]
+      : ["「地域別相談室」をのぞく", "いろいろな国の投稿を見て、行ってみたい地域を探してみましょう。"],
+    ["「海外大生の日常」を見る", "メンターたちの留学生活をのぞいて、気になったら返信してみましょう。"]
+  ];
+  $("nextSteps").innerHTML = "";
+  items.forEach(([t,d],k)=>{
+    const li = document.createElement("li");
+    li.innerHTML = `<span class="n">${k+1}</span><span><b></b><br><span class="lead"></span></span>`;
+    li.querySelector("b").textContent = t; li.querySelector(".lead").textContent = d;
+    $("nextSteps").appendChild(li);
+  });
+}
+
+// confetti on completion
+function confetti(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const c = document.createElement("canvas"); c.id = "confetti"; document.body.appendChild(c);
+  const ctx = c.getContext("2d"), W = c.width = innerWidth, H = c.height = innerHeight;
+  const css = getComputedStyle(document.documentElement);
+  const colors = ["--sea","--sun","--ok","--navy"].map(v=>css.getPropertyValue(v).trim());
+  const ps = Array.from({length:120},()=>({x:W/2, y:H/3, vx:(Math.random()-.5)*12, vy:Math.random()*-10-4,
+    s:4+Math.random()*5, r:Math.random()*6, c:colors[Math.floor(Math.random()*colors.length)]}));
+  let t = 0;
+  (function tick(){
+    ctx.clearRect(0,0,W,H);
+    ps.forEach(p=>{ p.vy += .35; p.x += p.vx; p.y += p.vy; p.r += .1;
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r); ctx.fillStyle = p.c; ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*1.6); ctx.restore(); });
+    if(++t < 150) requestAnimationFrame(tick); else c.remove();
+  })();
+}
 
 // principles
 document.querySelectorAll("#principles .chip").forEach(c=> c.onclick = ()=>{
@@ -519,7 +671,7 @@ $("submitForm").addEventListener("submit", async e=>{
       $("sendBtn").disabled = false; $("sendBtn").textContent = "送信する"; return;
     }
   }
-  state.sent = {id, at:new Date().toISOString()}; state.step = 8; save(); render(); window.scrollTo({top:0});
+  state.sent = {id, at:new Date().toISOString()}; state.step = 8; save(); render(); window.scrollTo({top:0}); confetti();
   $("sendBtn").disabled = false; $("sendBtn").textContent = "送信する";
 });
 
