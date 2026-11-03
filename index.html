@@ -201,7 +201,12 @@ input[type=text],textarea,select{font:inherit;color:var(--fg);background:var(--b
 .mentors{display:grid;gap:12px}
 .mentor{display:grid;grid-template-columns:72px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,var(--card),var(--peach));border:1.5px solid color-mix(in srgb,var(--accent) 40%,var(--line));border-radius:20px;padding:14px;animation:float-in .7s cubic-bezier(.2,1.3,.4,1) both;animation-delay:calc(var(--k,0) * 160ms)}
 @keyframes float-in{from{opacity:0;transform:translateY(24px) scale(.94)}to{opacity:1;transform:none}}
-.mentor img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:3px solid var(--card);box-shadow:0 0 0 3px var(--accent)}
+.mentor .mav{width:72px;height:72px;border-radius:50%;overflow:hidden;border:3px solid var(--card);box-shadow:0 0 0 3px var(--accent);display:grid;place-items:center;
+  background:linear-gradient(135deg,var(--brand),var(--sub));color:#fff;font-family:var(--font-stamp);font-size:1.7rem}
+.mentor .mav img{width:100%;height:100%;object-fit:cover;display:block}
+.mentor .tagline{font-size:.8rem;color:var(--fg);display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center}
+.mentor .match{font-size:.7rem;font-weight:700;color:#fff;background:var(--accent);border-radius:999px;padding:1px 8px}
+.mentor .more{font-size:.82rem;font-weight:700;color:var(--brand)}
 .mentor b{font-family:var(--font-head);font-size:1.1rem;color:var(--brand-deep)}
 .mentor .school{font-size:.82rem;color:var(--brand);font-weight:700;display:block}
 .mentor .why{font-size:.82rem;color:var(--muted)}
@@ -681,7 +686,7 @@ section.step:not([hidden]) .rank-badge{animation:pop .6s both 1.5s}
   </div>
   <button class="btn accent" id="departBtn" type="button" style="justify-self:stretch;font-size:1.1rem;min-height:60px"><i data-lucide="plane-takeoff"></i>Discordへ出発！</button>
   <div class="card" id="matchDone" hidden>
-    <h3>相談するときは、この先輩をメンションしてみてね</h3>
+    <h3>あなたに近い先輩メンター</h3>
     <div class="mentors" id="matchesDone"></div>
   </div>
   <div class="card">
@@ -733,27 +738,30 @@ const CONFIG = {
 // メンター。regions / fields を埋めると「あなたに近い先輩」診断に出るようになります。
 // regions は REGIONS、fields は FIELDS の言葉と同じものを書いてください。
 // 写真はスライドから切り出したものです。名前と写真の組み合わせを確認してから regions を埋めてください。
+// メンター診断のデータ。regions / fields / types は下の REGIONS / FIELDS / TYPES と同じ表記にします。
+// discord:true のメンターには「@名前 とメンション」の案内が出ます。url があると RyuPass のプロフィールへのリンクが出ます。
+// RyuPass（https://www.ryupass.com/connect-members）の掲載メンターは、プロフィールページの内容から作っています。
 const MENTORS = [
-  {name:"Kanon", school:"Middlebury College", regions:["アメリカ"], fields:[], photo:"img/kanon.jpg", note:"全体統括。IB校からアメリカのリベラルアーツ大学へ。笹川平和財団奨学金の一期生。"},
-  {name:"Kota",  school:"The University of Sydney", regions:["オーストラリア"], fields:[], photo:"img/kota.jpg", note:"全体統括。高校2年で留学を決意し、ファンデーションコースを経てシドニー大学へ。"},
-  {name:"Haruna", school:"", regions:[], fields:[], photo:"img/mentors/haruna.jpg"},
-  {name:"Aoi H", school:"", regions:[], fields:[], photo:"img/mentors/aoih.jpg"},
-  {name:"Sohta", school:"", regions:[], fields:[], photo:"img/mentors/sohta.jpg"},
-  {name:"Yumi", school:"", regions:[], fields:[], photo:"img/mentors/yumi.jpg"},
-  {name:"Sarina", school:"", regions:[], fields:[], photo:"img/mentors/sarina.jpg"},
-  {name:"Yuka", school:"", regions:[], fields:[], photo:"img/mentors/yuka.jpg"},
-  {name:"Kaera", school:"", regions:[], fields:[], photo:"img/mentors/kaera.jpg"},
-  {name:"Taku", school:"", regions:[], fields:[], photo:"img/mentors/taku.jpg"},
-  {name:"Shoichiro", school:"", regions:[], fields:[], photo:"img/mentors/shoichiro.jpg"},
-  {name:"Rion", school:"", regions:[], fields:[], photo:"img/mentors/rion.jpg"},
-  {name:"Junya", school:"", regions:[], fields:[], photo:"img/mentors/junya.jpg"},
-  {name:"Taiki", school:"", regions:[], fields:[], photo:"img/mentors/taiki.jpg"},
-  {name:"Sara", school:"", regions:[], fields:[], photo:"img/mentors/sara.jpg"},
-  {name:"Saku", school:"", regions:[], fields:[], photo:"img/mentors/saku.jpg"},
-  {name:"Yumiko", school:"", regions:[], fields:[], photo:"img/mentors/yumiko.jpg"},
-  {name:"Hiroe", school:"", regions:[], fields:[], photo:"img/mentors/hiroe.jpg"},
-  {name:"Aoi O", school:"", regions:[], fields:[], photo:"img/mentors/aoio.jpg"},
-  {name:"Sato", school:"", regions:[], fields:[], photo:"img/mentors/sato.jpg"}
+  {"name":"Kanon","school":"Middlebury College","country":"アメリカ","major":"全体統括","regions":["アメリカ"],"fields":[],"types":["大学進学"],"photo":"img/kanon.jpg","discord":true,"note":"IB校からアメリカのリベラルアーツ大学へ。笹川平和財団奨学金の一期生。"},
+  {"name":"Kota","school":"The University of Sydney","country":"オーストラリア","major":"全体統括","regions":["オーストラリア"],"fields":[],"types":["大学進学"],"photo":"img/kota.jpg","discord":true,"note":"高校2年で留学を決意し、ファンデーションコースを経てシドニー大学へ。"},
+  {"name": "Sota", "school": "ウォーリック大学", "country": "イギリス", "major": "経済学", "regions": ["イギリス"], "fields": ["ビジネス・経済"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/1", "note": "シンガポール育ち、IBからウォーリック大で経済学を学ぶ。"},
+  {"name": "Haru", "school": "カリフォルニア大学バークレー校", "country": "アメリカ", "major": "社会環境学・社会福祉", "regions": ["アメリカ"], "fields": ["人文・社会"], "types": ["大学進学"], "photo": "https://www.ryupass.com/static/members/face/haru.jpg", "url": "https://www.ryupass.com/connect-members/2", "note": "IB校から米国のUCバークレーへ進み、環境と社会問題を学ぶ。"},
+  {"name": "Waka", "school": "セント・クラウド州立大学", "country": "アメリカ", "major": "コミュニケーション学", "regions": ["アメリカ"], "fields": ["人文・社会"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/3", "note": "日本の大学を中退し、米国の大学で後悔のない進路を歩んでいる。"},
+  {"name": "Miyuki", "school": "グリネル大学", "country": "アメリカ", "major": "政治学・平和紛争研究", "regions": ["アメリカ"], "fields": ["人文・社会"], "types": ["大学進学"], "photo": "https://www.ryupass.com/static/members/face/miyuki.jpg", "url": "https://www.ryupass.com/connect-members/4", "note": "日本の公立高校からリベラルアーツカレッジへ進学し、政治学を学ぶ。"},
+  {"name": "Ayana", "school": "サンディエゴ・メサカレッジ", "country": "アメリカ", "major": "経済学", "regions": ["アメリカ"], "fields": ["ビジネス・経済"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/5", "note": "中学と高校で計2回留学し、サンディエゴのコミカレで経済学を学ぶ。"},
+  {"name": "Iroha T", "school": "ユニバーシティ・カレッジ・ロンドン", "country": "イギリス", "major": "心理学・教育学", "regions": ["イギリス"], "fields": ["人文・社会"], "types": ["大学進学"], "photo": "https://www.ryupass.com/static/members/face/iroha-t.jpg", "url": "https://www.ryupass.com/connect-members/6", "note": "IBを経てトロント大からUCLへ。子どもの発達と認知を研究。"},
+  {"name": "Hiroki", "school": "ニューカッスル大学", "country": "イギリス", "major": "マーケティング", "regions": ["イギリス"], "fields": ["ビジネス・経済"], "types": ["大学進学"], "photo": "https://www.ryupass.com/static/members/face/hiroki.jpg", "url": "https://www.ryupass.com/connect-members/7", "note": "中学はオーストラリア、高校は日本、大学はイギリスへ。"},
+  {"name": "Suzie", "school": "シドニー大学", "country": "オーストラリア", "major": "ファイナンス", "regions": ["オーストラリア"], "fields": ["ビジネス・経済"], "types": ["大学進学", "交換留学"], "photo": "https://www.ryupass.com/static/members/face/suzuko.jpg", "url": "https://www.ryupass.com/connect-members/8", "note": "高1からオーストラリア在住、シドニー大学商学部で学ぶ。"},
+  {"name": "Ibuki", "school": "カンザス大学", "country": "アメリカ", "major": "電気工学・コンピュータサイエンス", "regions": ["アメリカ"], "fields": ["理系・エンジニア"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/9", "note": "広島出身、奨学金を得てカンザス大学で電気工学・CSを学ぶ。"},
+  {"name": "Yuna", "school": "ウーロンゴン大学 附属語学学校", "country": "オーストラリア", "major": "語学留学", "regions": ["オーストラリア"], "fields": ["人文・社会"], "types": [], "photo": "", "url": "https://www.ryupass.com/connect-members/10", "note": "日本の大学を休学し、オーストラリアで語学留学中。"},
+  {"name": "Reina", "school": "ミュンヘン工科大学 ハイルブロン校", "country": "ドイツ", "major": "マネジメント＆データサイエンス", "regions": ["ヨーロッパ"], "fields": ["ビジネス・経済", "理系・エンジニア"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/11", "note": "純ジャパからドイツのTUMへ進学し、学費無料で英語で学ぶ。"},
+  {"name": "Eito", "school": "エディンバラ大学", "country": "イギリス", "major": "計算物理学", "regions": ["イギリス"], "fields": ["理系・エンジニア"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/12", "note": "バンコクのインター校から、エディンバラ大で物理学を学ぶ。"},
+  {"name": "Saku", "school": "ニューサウスウェールズ大学", "country": "オーストラリア", "major": "マーケティング", "regions": ["オーストラリア"], "fields": ["ビジネス・経済"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/13", "note": "日本のIB校からオーストラリアの大学へ進学。"},
+  {"name": "Aoi", "school": "イーストアングリア大学", "country": "イギリス", "major": "国際開発学", "regions": ["イギリス"], "fields": ["人文・社会"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/14", "note": "愛知出身、イギリスのイーストアングリア大学で国際開発学を学ぶ。"},
+  {"name": "Miku", "school": "ブリティッシュコロンビア大学", "country": "カナダ", "major": "経営学", "regions": ["カナダ"], "fields": ["ビジネス・経済"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/15", "note": "留学経験なしからカナダへ渡り、UBCで経営学を学ぶ。"},
+  {"name": "Ryan", "school": "ウィスコンシン大学マディソン校", "country": "アメリカ", "major": "不動産・マーケティング", "regions": ["アメリカ"], "fields": ["ビジネス・経済"], "types": ["大学進学"], "photo": "https://www.ryupass.com/static/members/face/ryan.jpg", "url": "https://www.ryupass.com/connect-members/16", "note": "中学卒業直前に渡米し、ウィスコンシン大で不動産・マーケを専攻。"},
+  {"name": "Koume", "school": "メルボルン大学", "country": "オーストラリア", "major": "医用生体工学", "regions": ["オーストラリア"], "fields": ["理系・エンジニア", "医療・生命"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/17", "note": "日本の大学から再挑戦し、メルボルンで医工学を学ぶ。"},
+  {"name": "Yumiko", "school": "シンガポール国立大学", "country": "シンガポール", "major": "経営学", "regions": ["アジア"], "fields": ["ビジネス・経済"], "types": ["大学進学"], "photo": "", "url": "https://www.ryupass.com/connect-members/18", "note": "高校からシンガポールへ移り、NUSでビジネスを学ぶ。"}
 ];
 
 const REGIONS = ["アメリカ","カナダ","イギリス","ヨーロッパ","オーストラリア","アジア","まだ決めていない"];
@@ -1106,15 +1114,30 @@ $("nick").addEventListener("input", e=>{ state.nick = e.target.value.trim(); sav
 $("nick").addEventListener("change", ()=>{ renderTicket(); Sound.tick(); });
 
 function matchMentors(){
-  const scored = MENTORS.map(m=>({m, s: m.regions.filter(r=>state.regions.includes(r)).length*2 + m.fields.filter(f=>state.fields.includes(f)).length}))
-    .filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,2).map(x=>x.m);
-  return scored;
+  // 地域が合うと3点、分野が合うと2点、留学のタイプが合うと1点。地域か分野が合う人の上位3人。
+  return MENTORS.map((m,i)=>{
+      const r = m.regions.filter(x=>state.regions.includes(x)).length, f = m.fields.filter(x=>state.fields.includes(x)).length;
+      return {m, i, s: r*3 + f*2 + ((m.types||[]).includes(state.type) ? 1 : 0), hit: r + f};
+    })
+    .filter(x=>x.hit>0).sort((a,b)=> b.s-a.s || a.i-b.i).slice(0,3).map(x=>x.m);
 }
 function mentorCard(m, k, why){
   const d = document.createElement("div"); d.className = "mentor"; d.style.setProperty("--k", k);
-  d.innerHTML = `<img alt=""><div><b></b><span class="school"></span><p class="why"></p><p class="why">相談するときは <span class="mention"></span> とメンションしてみてね</p></div>`;
-  d.querySelector("img").src = m.photo; d.querySelector("b").textContent = m.name; d.querySelector(".school").textContent = m.school;
-  d.querySelectorAll(".why")[0].textContent = why || m.note || ""; d.querySelector(".mention").textContent = "@" + m.name;
+  d.innerHTML = `<span class="mav"></span><div><b></b><span class="school"></span><p class="tagline"></p><p class="why"></p><p class="why how"></p></div>`;
+  const av = d.querySelector(".mav");
+  if(m.photo){ const img = document.createElement("img"); img.alt = ""; img.loading = "lazy"; img.src = m.photo;
+    img.onerror = ()=>{ img.remove(); av.textContent = [...m.name][0]; }; av.appendChild(img); }
+  else av.textContent = [...m.name][0];
+  d.querySelector("b").textContent = m.name;
+  d.querySelector(".school").textContent = m.school;
+  d.querySelector(".tagline").textContent = [m.country, m.major].filter(Boolean).join("・");
+  d.querySelectorAll(".why")[0].textContent = m.note || "";
+  const how = d.querySelector(".how");
+  if(why){ const w = document.createElement("span"); w.className = "match"; w.textContent = why; d.querySelector(".tagline").prepend(w); }
+  if(m.discord){ how.innerHTML = '相談するときは <span class="mention"></span> とメンションしてみてね'; how.querySelector(".mention").textContent = "@" + m.name; }
+  else if(m.url){ const a = document.createElement("a"); a.href = m.url; a.target = "_blank"; a.rel = "noopener"; a.className = "more";
+    a.textContent = "RyuPassでプロフィールを見る"; how.appendChild(a); }
+  else how.remove();
   return d;
 }
 let matchKey = "";
@@ -1123,9 +1146,10 @@ function renderMatches(target, note){
   if(target==="matches" && key===matchKey && el.children.length) return; if(target==="matches") matchKey = key;
   el.innerHTML = "";
   const regs = state.regions.filter(r=>r!==UNDECIDED);
-  if(list.length){ list.forEach((m,k)=> el.appendChild(mentorCard(m, k, `${m.regions.filter(r=>regs.includes(r)).join("・")}の先輩`))); }
+  if(list.length){ list.forEach((m,k)=>{ const hit = [...m.regions.filter(r=>regs.includes(r)), ...m.fields.filter(f=>state.fields.includes(f))];
+    el.appendChild(mentorCard(m, k, hit.join(" × ") + " がマッチ")); }); }
   else { [MENTORS[0], MENTORS[1]].forEach((m,k)=> el.appendChild(mentorCard(m, k))); }
-  if(note) $(note).textContent = list.length ? "" :
+  if(note) $(note).textContent = list.length ? "気になる先輩がいたら、プロフィールをのぞいてみましょう。質問はDiscordの地域別相談室で気軽にどうぞ。" :
     (regs.length ? `${regs.join("・")}に詳しいメンターは、Discordの地域別相談室で見つかります。まずは全体統括の2人に気軽に声をかけてみてください。`
                  : "行き先が決まっていなくても大丈夫。まずは全体統括の2人に気軽に声をかけてみてください。");
   return list.length;
